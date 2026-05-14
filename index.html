@@ -472,9 +472,10 @@ pre.code-block{background:#1a1e3a;color:#d4d4d4;padding:11px;border-radius:6px;f
   </div>
   <div class="divider"></div>
   <div class="sec"><div class="sec-lbl">4. 종교배경 및 직업</div>
-    <div class="g2">
-      <div class="fld"><div class="lbl">종교배경</div>
-        <select id="q4_religion_sel" onchange="onReligionSelect()" style="background:#fff;border:1px solid rgba(0,0,20,0.18);border-radius:6px;padding:9px 10px;font-size:15px;color:#0f1428;outline:none;width:100%;">
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px;">
+      <div class="fld" style="flex:1;">
+        <div class="lbl">종교배경</div>
+        <select id="q4_religion_sel" onchange="onReligionSelect()" style="height:44px;font-size:14px;">
           <option value="">선택</option>
           <option value="기독교">기독교</option>
           <option value="천주교">천주교</option>
@@ -485,7 +486,10 @@ pre.code-block{background:#1a1e3a;color:#d4d4d4;padding:11px;border-radius:6px;f
         <input type="text" id="q4_religion" placeholder="직접 입력 후 등록" oninput="syncPreview()" style="display:none;margin-top:6px;">
         <button type="button" id="religion-reg-btn" onclick="registerReligion()" style="display:none;margin-top:5px;width:100%;background:rgba(32,80,200,0.08);border:1px solid rgba(32,80,200,0.3);color:#2050c8;border-radius:5px;padding:6px;font-size:12px;font-weight:700;cursor:pointer;">+ 목록에 등록</button>
       </div>
-      <div class="fld"><div class="lbl">직업</div><input type="text" id="q4_job" placeholder="직업" oninput="syncPreview()"></div>
+      <div class="fld" style="flex:1;">
+        <div class="lbl">직업</div>
+        <input type="text" id="q4_job" placeholder="직업" oninput="syncPreview()" style="height:44px;font-size:14px;">
+      </div>
     </div>
   </div>
   <div class="divider"></div>
