@@ -546,7 +546,7 @@ const MEMBERS=[
 
 // ── 설정 ────────────────────────────────────────────────────────────────────
 let CFG={
-  url: localStorage.getItem('mon_url')||'https://script.google.com/macros/s/AKfycbx9cLqvQYctco11nO6HYUsT0ePfvuAwGhe73AXljrsKzAjQYtPgSTRFE5Qlrr_ASBq9/exec',
+  url: localStorage.getItem('mon_url')||'https://script.google.com/macros/s/AKfycbz9vUxA8XI2GXCph_mPZ4nAw23R4Dr29GbUb8aC64H8OhIMl38DYNjc-rFbdjTB9ACm/exec',
   title: localStorage.getItem('mon_title')||'61기 수주반',
   groups: JSON.parse(localStorage.getItem('mon_groups')||'null') || [
     {id:'A',name:'A그룹',leader:''},
@@ -1258,11 +1258,12 @@ async function syncJoFromServer(){
 async function syncJoToServer(){
   if(!CFG.url){showToast('⚠️ 구글 시트 URL을 먼저 설정하세요.');return;}
   var joMap={};
+  var kisu=localStorage.getItem('mon_kisu')||'61';
   MEMBERS.forEach(function(m){
-    if(!joMap[m.jo]) joMap[m.jo]={jo:String(m.jo),leader:'',trainer:'',trainee:'',group:m.group||''};
-    if(m.role==='리더') joMap[m.jo].leader=m.name;
-    else if(m.role==='훈련자') joMap[m.jo].trainer=m.name;
-    else if(m.role==='훈련생') joMap[m.jo].trainee=m.name;
+    if(!joMap[m.jo]) joMap[m.jo]={jo:String(m.jo),leader:'',trainer:'',trainee:'',leaderStep:'',trainerStep:'',traineeStep:'',group:m.group||'',kisu:m.kisu||kisu};
+    if(m.role==='리더'){joMap[m.jo].leader=m.name;joMap[m.jo].leaderStep=m.step||'';}
+    else if(m.role==='훈련자'){joMap[m.jo].trainer=m.name;joMap[m.jo].trainerStep=m.step||'';}
+    else if(m.role==='훈련생'){joMap[m.jo].trainee=m.name;joMap[m.jo].traineeStep=m.step||'';}
   });
   // ban 정보 추가
   var ban=localStorage.getItem('suju_ban')||'수지주일반';

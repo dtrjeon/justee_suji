@@ -743,7 +743,11 @@ pre.code-block{background:#1a1e3a;color:#d4d4d4;padding:11px;border-radius:6px;f
         <b id="sj_marriage">[미혼/기혼]</b>
         <span>의</span>
         <b id="sj_gender">[남자/여자]</b>
-        <span style="white-space:nowrap;">분을 <span style="border-bottom:0.5pt solid #333;min-width:24mm;display:inline-block;text-align:center;font-weight:700;vertical-align:baseline;" id="sj_meet_place">&nbsp;</span>에서 만났습니다.</span>
+        <span>분을</span>
+        <div style="width:100%;"></div>
+        <span style="border-bottom:0.5pt solid #333;min-width:24mm;display:inline-block;text-align:center;font-weight:700;vertical-align:baseline;" id="sj_meet_place">&nbsp;</span>
+        <span>에서 만났습니다.</span>
+        <div style="width:100%;"></div>
         <span style="white-space:nowrap;">관계는</span>
         <span style="border-bottom:0.5pt solid #333;min-width:24mm;display:inline-block;font-weight:700;text-align:center;" id="sj_relation">&nbsp;</span>
         <span>입니다.</span>
@@ -1215,7 +1219,7 @@ const ROLES=['서론','은혜','인간','하나님','그리스도','믿음','결
 const MEMBERS=[{id:'leader',label:'훈련자(조장)',color:'#1a3a9e'},{id:'trainer',label:'훈련자',color:'#2050c8'},{id:'trainee',label:'훈련생',color:'#5c7cbb'}];
 const DIAG_MAP={'있었고_믿음':{diag:'머리신자 / 이미신자',badge:'orange'},'있었고_etc':{diag:'착각비신자',badge:'red'},'없었고_믿음':{diag:'확신부족 / 비신자',badge:'blue-purple'},'없었고_etc':{diag:'비신자',badge:'purple'}};
 let currentMode='server';
-let scriptUrl=localStorage.getItem('apps_script_url')||'https://script.google.com/macros/s/AKfycbx9cLqvQYctco11nO6HYUsT0ePfvuAwGhe73AXljrsKzAjQYtPgSTRFE5Qlrr_ASBq9/exec';
+let scriptUrl=localStorage.getItem('apps_script_url')||'https://script.google.com/macros/s/AKfycbz9vUxA8XI2GXCph_mPZ4nAw23R4Dr29GbUb8aC64H8OhIMl38DYNjc-rFbdjTB9ACm/exec';
 var _lastSavedDiagResult='';
 
 var _autoSaveTimer=null;
@@ -1617,6 +1621,8 @@ function onJoSelect(){
     document.getElementById('q2_leader').value=found.leader||'';
     document.getElementById('q2_trainer').value=found.trainer||'';
     document.getElementById('q2_trainee1').value=found.trainee||'';
+    // 조 선택 시 group localStorage 저장
+    if(found.group) localStorage.setItem('suju_group', found.group);
   }else{
     document.getElementById('q2_leader').value='';
     document.getElementById('q2_trainer').value='';
@@ -1681,11 +1687,9 @@ async function loadJoFromServer(){
     if(json.status==='ok'&&json.joData&&json.joData.length){
       saveJoDataLS(json.joData);
       buildJoDropdown();
+      // ban은 고정값, group은 조별 데이터에 포함되어 있으므로 별도 저장 불필요
+      localStorage.setItem('suju_ban', '수지주일반');
       showStatus('✅ 조정보를 서버에서 불러왔습니다. ('+json.joData.length+'개 조)','success');
-      // ban/group 정보 localStorage에 저장
-      var first=json.joData[0];
-      if(first&&first.ban) localStorage.setItem('suju_ban', first.ban);
-      if(first&&first.group) localStorage.setItem('suju_group', first.group);
     } else {
       showStatus('서버에 저장된 조정보가 없습니다.','info');
     }
