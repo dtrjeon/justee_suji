@@ -96,7 +96,6 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .diag-table tr.active-row td{background:#f0f4ff;}
 .diag-table .group-cell{background:#f7f9ff;font-weight:700;font-size:10px;color:#1a3a9e;}
 .diag-badge{display:inline-block;border-radius:20px;padding:3px 9px;font-size:10px;font-weight:700;}
-.diag-badge
 .diag-badge.blue{background:#e3f0ff;color:#1565c0;}
 .diag-badge.orange{background:#fff3e0;color:#e65100;}
 .diag-name.orange{color:#e65100;}
@@ -714,10 +713,9 @@ pre.code-block{background:#1a1e3a;color:#d4d4d4;padding:11px;border-radius:6px;f
         <span style="font-weight:700;white-space:nowrap;">1.</span>
         <span style="border-bottom:0.5pt solid #333;min-width:12mm;display:inline-block;text-align:center;font-weight:700;" id="sj_jo">&nbsp;</span>
         <span style="white-space:nowrap;">조 공개 보고 드리겠습니다. (제</span>
-        <span style="border-bottom:0.5pt solid #333;min-width:8mm;display:inline-block;text-align:center;font-weight:700;" id="sj_week">&nbsp;</span>
+        <span style="border-bottom:0.5pt solid #333;min-width:8mm;display:inline-block;text-align:center;font-weight:700;" id="sj_kisu">&nbsp;</span>
         <span>기</span>
         <span style="border-bottom:0.5pt solid #333;min-width:16mm;display:inline-block;text-align:center;font-weight:700;" id="sj_ban">&nbsp;</span>
-        <span>반</span>
         <span style="border-bottom:0.5pt solid #333;min-width:12mm;display:inline-block;text-align:center;font-weight:700;" id="sj_group">&nbsp;</span>
         <span>그룹)</span>
       </div>
@@ -1223,7 +1221,7 @@ const ROLES=['서론','은혜','인간','하나님','그리스도','믿음','결
 const MEMBERS=[{id:'leader',label:'훈련자(조장)',color:'#1a3a9e'},{id:'trainer',label:'훈련자',color:'#2050c8'},{id:'trainee',label:'훈련생',color:'#5c7cbb'}];
 const DIAG_MAP={'있었고_믿음':{diag:'머리신자 / 이미신자',badge:'orange'},'있었고_etc':{diag:'착각비신자',badge:'red'},'없었고_믿음':{diag:'확신부족 / 비신자',badge:'blue-purple'},'없었고_etc':{diag:'비신자',badge:'purple'}};
 let currentMode='server';
-let scriptUrl=localStorage.getItem('apps_script_url')||'https://script.google.com/macros/s/AKfycbx2hsd0MZIZFjn7fqzrhaaD0qXHqoIPUhquyq0dwA9Tlbax220JebIiycUbGJMhnt0a/exec';
+let scriptUrl=localStorage.getItem('apps_script_url')||'https://script.google.com/macros/s/AKfycbyWdYxgVzJEfFYc7G3TqRyByXDmaxJ-JJZuxa05l7Wub-BfYF-gn1xkmaw8gULr-b-i/exec';
 var _lastSavedDiagResult='';
 
 var _autoSaveTimer=null;
@@ -2410,12 +2408,15 @@ function syncSuju(){
   var surname=v('q3_name')||'';
   setEl2('sj_target_name_display', surname ? surname+'**' : '');
   setEl2('sj_jo',v('q1_jo'));
-  setEl2('sj_week',v('report-week'));
-  // 조 데이터에서 그룹·반 자동 참조 (없으면 로컬 설정값 사용)
+  // 기수: joData의 kisu 또는 localStorage mon_kisu (기본값 61)
   var _jo=v('q1_jo');
   var _joInfo=getJoData().find(function(j){return j.jo===_jo;});
-  setEl2('sj_ban',  (_joInfo&&_joInfo.ban)  || localStorage.getItem('suju_ban')  || '');
-  setEl2('sj_group',(_joInfo&&_joInfo.group)|| localStorage.getItem('suju_group')|| '');
+  var _kisu=(_joInfo&&_joInfo.kisu)||localStorage.getItem('mon_kisu')||'61';
+  setEl2('sj_kisu', _kisu);
+  // 반: 조 데이터의 ban에서 "반" 접미어 제거 후 표시
+  var _ban=(_joInfo&&_joInfo.ban)||localStorage.getItem('suju_ban')||'수지주일반';
+  setEl2('sj_ban', _ban.replace(/반$/, ''));
+  setEl2('sj_group',(_joInfo&&_joInfo.group)||localStorage.getItem('suju_group')||'');
   // 팀원
   setEl2('sj_leader',v('q2_leader'));
   setEl2('sj_trainer',v('q2_trainer'));
@@ -2685,7 +2686,7 @@ function openAdminPage(){
 }
 
 function openAdminModal(){
-  var saved = localStorage.getItem(LS_ADMIN_URL) || 'justee61-admin.html';
+  var saved = localStorage.getItem(LS_ADMIN_URL) || 'justee61_admin.html';
   var inp = document.getElementById('admin-url-input');
   var clearBtn = document.getElementById('admin-clear-btn');
   var status = document.getElementById('admin-url-status');
