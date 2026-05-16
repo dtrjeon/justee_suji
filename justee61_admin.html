@@ -72,6 +72,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 /* TABLE */
 .tbl-wrap{background:var(--card);border-radius:10px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px;}
+.tbl-wrap table{height:100%;}
+.tbl-wrap tr[style*="background:#f0f4ff"] td{height:26px !important;font-weight:700;border-top:1.5px solid rgba(32,80,200,0.2)!important;}
 .tbl-head{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .tbl-head-title{font-size:11px;font-weight:700;color:var(--primary);letter-spacing:.5px;}
 .tbl-head-sub{font-size:10px;color:var(--text3);}
@@ -191,28 +193,32 @@ tr:last-child td{border-bottom:none;}
   <!-- 타이틀 + 결신율 -->
   <div style="background:#1a3ab0;border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
     <div style="color:#fff;font-size:14px;font-weight:900;letter-spacing:1px;" id="wb-title">61기 수주반</div>
-    <div style="display:flex;align-items:center;gap:16px;">
-      <div style="background:rgba(255,255,255,0.15);border-radius:8px;padding:6px 14px;text-align:center;">
-        <div style="color:rgba(255,255,255,0.6);font-size:9px;font-weight:700;">결신율 (<span id="s-decision-cnt">0</span>명)</div>
-        <div style="color:#fff;font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;" id="wb-rate">—</div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div id="data-warning-0" style="display:none;background:#fff3cd;color:#856404;border:1px solid #ffc107;border-radius:5px;padding:3px 10px;font-size:10px;font-weight:700;">⚠️ 데이터 확인필요</div>
+      <div style="color:rgba(255,255,255,0.8);font-size:13px;font-weight:900;letter-spacing:1px;">
+        결신율 &nbsp;<span style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:#fff;" id="wb-rate">—</span>
+        &nbsp;<span style="font-size:11px;color:rgba(255,255,255,0.6);">(<span id="s-decision-cnt">0</span>명)</span>
       </div>
     </div>
   </div>
 
   <!-- 중단 4박스 + 실시현황 -->
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 120px;gap:8px;margin-bottom:12px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 72px;gap:8px;margin-bottom:12px;align-items:stretch;">
 
     <!-- 복음제시 -->
     <div class="tbl-wrap" style="margin-bottom:0;">
       <div style="background:#dce6f7;padding:6px 10px;font-size:11px;font-weight:700;color:#1a3ab0;text-align:center;border-bottom:1px solid var(--border);">복음제시</div>
-      <table style="font-size:11px;">
+      <table style="font-size:11px;height:100%;">
         <tbody>
-          <tr><td class="td-left">관계(팀)</td><td id="s-gospel-team" style="font-weight:700;">—</td></tr>
-          <tr><td class="td-left">질문지(팀)</td><td id="s-ques-team">—</td></tr>
-          <tr><td class="td-left">7일후(팀)</td><td id="s-7day-team">—</td></tr>
-          <tr><td class="td-left">개인</td><td id="s-gospel-personal">—</td></tr>
-          <tr><td class="td-left">관계</td><td id="s-gospel-rel">—</td></tr>
-          <tr style="background:#f0f4ff;"><td class="td-left" style="font-weight:700;">합계</td><td id="s-gospel-total" style="font-weight:700;color:var(--primary);">—</td></tr>
+          <tr><td colspan="2" class="td-left" style="background:#f0f4ff;font-weight:700;font-size:9px;color:#1a3ab0;">팀전도(훈련생포함)</td></tr>
+          <tr><td class="td-left">관계(팀)</td><td id="s-gospel-team" style="font-weight:700;text-align:right;">—</td></tr>
+          <tr><td class="td-left">질문지(팀)</td><td id="s-ques-team" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left">7일후(팀)</td><td id="s-7day-team" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left">QQ</td><td id="s-gospel-qq" style="text-align:right;">—</td></tr>
+          <tr><td colspan="2" class="td-left" style="background:#f0f4ff;font-weight:700;font-size:9px;color:#1a3ab0;">팀전도 외</td></tr>
+          <tr><td class="td-left">개인</td><td id="s-gospel-personal" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left">관계</td><td id="s-gospel-rel" style="text-align:right;">—</td></tr>
+          <tr style="background:#f0f4ff;"><td class="td-left" style="font-weight:700;">합계</td><td id="s-gospel-total" style="font-weight:700;color:var(--primary);text-align:right;">—</td></tr>
         </tbody>
       </table>
     </div>
@@ -220,15 +226,17 @@ tr:last-child td{border-bottom:none;}
     <!-- 대상자구분 -->
     <div class="tbl-wrap" style="margin-bottom:0;">
       <div style="background:#dce6f7;padding:6px 10px;font-size:11px;font-weight:700;color:#1a3ab0;text-align:center;border-bottom:1px solid var(--border);">대상자구분</div>
-      <table style="font-size:11px;">
+      <table style="font-size:11px;height:100%;">
         <tbody>
-          <tr><td class="td-left">지인/지역가족</td><td id="d-local">—</td></tr>
-          <tr><td class="td-left">가족</td><td id="d-family">—</td></tr>
-          <tr><td class="td-left">지구촌교인</td><td id="d-church">—</td></tr>
-          <tr><td class="td-left">질문지</td><td id="d-ques">—</td></tr>
-          <tr><td class="td-left">7일후</td><td id="d-7day">—</td></tr>
-          <tr><td class="td-left">훈련생</td><td id="d-trainee">—</td></tr>
-          <tr style="background:#f0f4ff;"><td class="td-left" style="font-weight:700;">합계</td><td id="d-total" style="font-weight:700;color:var(--primary);">—</td></tr>
+          <tr><td class="td-left">지인/지인가족</td><td id="d-local" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left">가족</td><td id="d-family" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left">지구촌교인</td><td id="d-church" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left">질문지</td><td id="d-ques" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left">7일후</td><td id="d-7day" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left">훈련생</td><td id="d-trainee" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left">&nbsp;</td><td></td></tr>
+          <tr><td class="td-left">&nbsp;</td><td></td></tr>
+          <tr style="background:#f0f4ff;"><td class="td-left" style="font-weight:700;">합계</td><td id="d-total" style="font-weight:700;color:var(--primary);text-align:right;">—</td></tr>
         </tbody>
       </table>
     </div>
@@ -236,14 +244,17 @@ tr:last-child td{border-bottom:none;}
     <!-- 관계/질문지 결과 -->
     <div class="tbl-wrap" style="margin-bottom:0;">
       <div style="background:#dce6f7;padding:6px 10px;font-size:11px;font-weight:700;color:#1a3ab0;text-align:center;border-bottom:1px solid var(--border);">관계/질문지 결과</div>
-      <table style="font-size:11px;">
+      <table style="font-size:11px;height:100%;">
         <tbody>
-          <tr><td class="td-left">이미신자</td><td id="r-believer">—</td></tr>
-          <tr><td class="td-left">결신</td><td id="r-decision" style="color:var(--red);font-weight:700;">—</td></tr>
-          <tr><td class="td-left">확신부족</td><td id="r-confirm">—</td></tr>
-          <tr><td class="td-left">보류</td><td id="r-reject">—</td></tr>
-          <tr><td class="td-left">거절</td><td id="r-refuse">—</td></tr>
-          <tr style="background:#f0f4ff;"><td class="td-left" style="font-weight:700;">합계</td><td id="r-total" style="font-weight:700;color:var(--primary);">—</td></tr>
+          <tr><td class="td-left">이미신자</td><td id="r-believer" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left">결신</td><td id="r-decision" style="color:var(--red);font-weight:700;text-align:right;">—</td></tr>
+          <tr><td class="td-left">확신부족</td><td id="r-confirm" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left">보류</td><td id="r-reject" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left">거절</td><td id="r-refuse" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left">&nbsp;</td><td></td></tr>
+          <tr><td class="td-left">&nbsp;</td><td></td></tr>
+          <tr><td class="td-left">&nbsp;</td><td></td></tr>
+          <tr style="background:#f0f4ff;"><td class="td-left" style="font-weight:700;">합계</td><td id="r-total" style="font-weight:700;color:var(--primary);text-align:right;">—</td></tr>
         </tbody>
       </table>
     </div>
@@ -251,32 +262,33 @@ tr:last-child td{border-bottom:none;}
     <!-- 후속양육 연결 -->
     <div class="tbl-wrap" style="margin-bottom:0;">
       <div style="background:#dce6f7;padding:6px 10px;font-size:11px;font-weight:700;color:#1a3ab0;text-align:center;border-bottom:1px solid var(--border);">후속양육 연결</div>
-      <table style="font-size:11px;">
+      <table style="font-size:11px;height:100%;">
         <tbody>
-          <tr><td class="td-left" style="font-size:10px;">7일후재방문</td><td id="fu-7day">—</td></tr>
-          <tr><td class="td-left" style="font-size:10px;">24시간전화</td><td id="fu-24h">—</td></tr>
-          <tr><td class="td-left" style="font-size:10px;">예배참석약속</td><td id="fu-worship">—</td></tr>
-          <tr><td class="td-left" style="font-size:10px;">새가족반연결</td><td id="fu-new">—</td></tr>
-          <tr><td class="td-left" style="font-size:10px;">토요심방</td><td id="fu-sat">—</td></tr>
-          <tr><td class="td-left" style="font-size:10px;">하지 못</td><td id="fu-none">—</td></tr>
-          <tr style="background:#f0f4ff;"><td class="td-left" style="font-weight:700;">합계</td><td id="fu-total" style="font-weight:700;color:var(--primary);">—</td></tr>
+          <tr><td class="td-left" style="font-size:10px;">7일후재방문</td><td id="fu-7day" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left" style="font-size:10px;">24시간전화</td><td id="fu-24h" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left" style="font-size:10px;">예배참석약속</td><td id="fu-worship" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left" style="font-size:10px;">새가족반연결</td><td id="fu-new" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left" style="font-size:10px;">목장연결</td><td id="fu-mokjang" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left" style="font-size:10px;">하지 못</td><td id="fu-none" style="text-align:right;">—</td></tr>
+          <tr><td class="td-left">&nbsp;</td><td></td></tr>
+          <tr style="background:#f0f4ff;"><td class="td-left" style="font-weight:700;">합계</td><td id="fu-total" style="font-weight:700;color:var(--primary);text-align:right;">—</td></tr>
         </tbody>
       </table>
     </div>
 
     <!-- 실시/미실시/전체조 -->
-    <div style="display:flex;flex-direction:column;gap:6px;">
-      <div style="background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:10px;text-align:center;flex:1;">
-        <div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:4px;">실 시</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--green);" id="s-active-jo">—</div>
+    <div style="display:flex;flex-direction:column;gap:4px;height:100%;">
+      <div style="background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:5px 4px;text-align:center;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:1px;">실 시</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--green);" id="s-active-jo">—</div>
       </div>
-      <div style="background:#fafafa;border:1px solid #ddd;border-radius:8px;padding:8px;text-align:center;flex:1;">
-        <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:2px;">미실시</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--text2);" id="s-inactive-jo">—</div>
+      <div style="background:#fafafa;border:1px solid #ddd;border-radius:8px;padding:5px 4px;text-align:center;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:1px;">미실시</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text2);" id="s-inactive-jo">—</div>
       </div>
-      <div style="background:#e3f0ff;border:1px solid #90caf9;border-radius:8px;padding:8px;text-align:center;flex:1;">
-        <div style="font-size:10px;font-weight:700;color:var(--blue);margin-bottom:2px;">전체 조</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--blue);" id="s-total-jo">—</div>
+      <div style="background:#e3f0ff;border:1px solid #90caf9;border-radius:8px;padding:5px 4px;text-align:center;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div style="font-size:10px;font-weight:700;color:var(--blue);margin-bottom:1px;">전체 조</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--blue);" id="s-total-jo">—</div>
       </div>
     </div>
 
@@ -284,9 +296,17 @@ tr:last-child td{border-bottom:none;}
 
   <!-- 하단 상세 테이블 -->
   <div class="tbl-wrap">
-    <div class="tbl-head">
-      <span class="tbl-head-title">조별 상세 현황</span>
-      <span class="tbl-head-sub" id="week-label-0">—주차</span>
+    <div class="tbl-head" style="display:flex;justify-content:space-between;align-items:center;">
+      <span class="tbl-head-title">조별 상세 현황 (<span id="week-label-0">—</span>주차 · <span id="week-period-0"></span>)</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:10px;color:rgba(255,255,255,0.8);">
+          <span id="toggle-label-0">미실시 포함</span>
+          <div style="position:relative;width:34px;height:18px;" onclick="toggleInactiveRows()">
+            <div id="toggle-track-0" style="width:34px;height:18px;background:rgba(255,255,255,0.3);border-radius:9px;transition:background .2s;"></div>
+            <div id="toggle-thumb-0" style="position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left .2s;"></div>
+          </div>
+        </label>
+      </div>
     </div>
     <div class="tbl-scroll">
       <table>
@@ -295,7 +315,6 @@ tr:last-child td{border-bottom:none;}
             <th rowspan="2">조</th>
             <th rowspan="2">이름</th>
             <th rowspan="2">단계</th>
-            <th rowspan="2">구분</th>
             <th rowspan="2">문서번호</th>
             <th rowspan="2">전도유형</th>
             <th rowspan="2">연계</th>
@@ -306,20 +325,18 @@ tr:last-child td{border-bottom:none;}
             <th rowspan="2">지역</th>
             <th rowspan="2">관계<br>(1)</th>
             <th rowspan="2">관계<br>(2)</th>
-            <th rowspan="2">복음<br>전달<br>방법</th>
+            <th rowspan="2">복음<br>전달</th>
             <th colspan="3">진단 질문</th>
             <th rowspan="2">결과</th>
-            <th colspan="2">복음 참여</th>
-            <th colspan="6">전복음</th>
+            <th colspan="8">복음 참여 (역할배분)</th>
             <th colspan="6">후속양육 연결</th>
             <th rowspan="2">비고</th>
             <th rowspan="2">불참자</th>
           </tr>
           <tr>
             <th>확신</th><th>이유</th><th>진단</th>
-            <th>함<br>관</th><th>서</th>
-            <th>은</th><th>인</th><th>하</th><th>나</th><th>그</th><th>믿</th>
-            <th>7일<br>후</th><th>24시<br>간</th><th>예배<br>참석</th><th>새가<br>족반</th><th>하지<br>못</th><th>토요<br>심방</th>
+            <th>서</th><th>은</th><th>인</th><th>하</th><th>그</th><th>믿</th><th>결</th><th>즉</th>
+            <th>7일<br>후</th><th>24시<br>간</th><th>예배<br>참석</th><th>새가<br>족반</th><th>하지<br>못</th>
           </tr>
         </thead>
         <tbody id="tb-weekly"></tbody>
@@ -560,7 +577,7 @@ const MEMBERS=[
 
 // ── 설정 ────────────────────────────────────────────────────────────────────
 let CFG={
-  url: localStorage.getItem('mon_url')||'https://script.google.com/macros/s/AKfycbzyE6fQycaV2srd5UQWazDQ6lnqJ9bk1sDEk_LsVLSRIsMeFKnQwqpz3tqG4YQOSNJD/exec',
+  url: localStorage.getItem('mon_url')||'https://script.google.com/macros/s/AKfycbxj1-Ki6u4LIPbmSlOIrEZ7Pn6ZGj6QaMxgk5NUoLY/exec',
   title: localStorage.getItem('mon_title')||'61기 수주반',
   groups: JSON.parse(localStorage.getItem('mon_groups')||'null') || [
     {id:'A',name:'A그룹',leader:''},
@@ -616,13 +633,8 @@ function onLockInput(){
 }
 
 window.onload=function(){
-  // 인증 확인 (세션 유지)
-  if(sessionStorage.getItem(LS_AUTH) !== '1'){
-    document.getElementById('lock-screen').style.display = 'flex';
-    setTimeout(function(){ document.getElementById('lock-input').focus(); }, 100);
-  } else {
-    document.getElementById('lock-screen').style.display = 'none';
-  }
+  // 비밀번호 일시 해제 (테스트용)
+  document.getElementById('lock-screen').style.display = 'none';
 
   // 저장된 구성원 복원
   var saved=localStorage.getItem('mon_members');
@@ -720,42 +732,65 @@ function updatePeriodTxt(w){
 
 // ── TAB 0: 주간현황 ──────────────────────────────────────────────────────────
 function renderTab0(data,w){
-  var totalGospelTeam=0,totalQuesTeam=0,total7dayTeam=0,totalPersonal=0,totalRel=0;
-  var totalDecision=0,totalBeliever=0,totalConfirm=0,totalReject=0;
-  var fu={'7일후':0,'24시간':0,'예배':0,'새가족':0,'하지못':0,'토요':0};
+  var totalGospelTeam=0,totalQuesTeam=0,total7dayTeam=0,totalPersonal=0,totalRel=0,totalQQ=0;
+  var totalDecision=0,totalBeliever=0,totalConfirm=0,totalReject=0,totalRefuse=0;
+  var fu={'7일후':0,'24시간':0,'예배':0,'새가족':0,'목장':0,'하지못':0};
   var activeJo=new Set();
   var totalJo=new Set(MEMBERS.map(function(m){return m.jo;})).size||10;
-  // 총인원/조 수 카드 업데이트
+  var leaderCnt=0,trainerCnt=0,traineeCnt=0;
+
   var tmEl=document.getElementById('total-members');
   var tjEl=document.getElementById('total-jo');
   if(tmEl) tmEl.textContent=MEMBERS.length||'—';
   if(tjEl) tjEl.textContent=totalJo+'개 조';
 
-  // 후속양육 집계 헬퍼
   function fuKey(v){
     if(!v) return null;
     if(v.indexOf('7일')>-1) return '7일후';
     if(v.indexOf('24')>-1) return '24시간';
     if(v.indexOf('예배')>-1) return '예배';
     if(v.indexOf('새가족')>-1) return '새가족';
+    if(v.indexOf('목장')>-1) return '목장';
     if(v.indexOf('하지')>-1||v.indexOf('못')>-1) return '하지못';
-    if(v.indexOf('토요')>-1) return '토요';
     return null;
   }
 
   data.forEach(function(r){
     activeJo.add(String(r.jo));
-    totalGospelTeam+=r.gospel;
-    totalQuesTeam+=r.target;
-    totalRel+=r.contact;
-    totalDecision+=r.decision;
-    totalBeliever+=r.believer;
-    totalConfirm+=r.confirm;
-    totalReject+=r.reject;
+    var et=r.evangType||r.evang_type||'';
+    if(et.indexOf('관계(팀)')>-1||et.indexOf('관계(팀)')>-1) totalGospelTeam++;
+    else if(et.indexOf('질문지')>-1) totalQuesTeam++;
+    else if(et.indexOf('7일후')>-1) total7dayTeam++;
+    else if(et==='개인') totalPersonal++;
+    else if(et==='관계') totalRel++;
+    else if(et==='QQ') totalQQ++;
+    totalDecision+=Number(r.decision||0);
+    totalBeliever+=Number(r.believer||0);
+    totalConfirm+=Number(r.confirm||0);
+    totalReject+=Number(r.reject||0);
     var fk=fuKey(r.followup);
     if(fk) fu[fk]++;
   });
-  var totalGospelAll=totalGospelTeam+totalRel;
+
+  // 역할별 실시 카운트
+  var jos=[...new Set(MEMBERS.map(function(m){return m.jo;}))].sort(function(a,b){return a-b;});
+  jos.forEach(function(jo){
+    var joRecs=data.filter(function(r){return String(r.jo)===String(jo);});
+    if(!joRecs.length) return;
+    var joMembers=MEMBERS.filter(function(m){return m.jo===jo;});
+    joMembers.forEach(function(m){
+      var action=m.role==='리더'?(joRecs[0]?joRecs[0].leaderAction:''):
+                 m.role==='훈련자'?(joRecs[0]?joRecs[0].trainerAction:''):
+                 (joRecs[0]?joRecs[0].traineeAction:'');
+      if(action==='하였고'){
+        if(m.role==='리더') leaderCnt++;
+        else if(m.role==='훈련자') trainerCnt++;
+        else traineeCnt++;
+      }
+    });
+  });
+
+  var totalGospelAll=totalGospelTeam+totalQuesTeam+total7dayTeam+totalPersonal+totalRel+totalQQ;
   var rate=totalGospelAll>0?Math.round((totalDecision/totalGospelAll)*1000)/10:0;
   var fuTotal=Object.values(fu).reduce(function(a,b){return a+b;},0);
   var inactive=totalJo-activeJo.size;
@@ -768,6 +803,7 @@ function renderTab0(data,w){
   setText('s-7day-team',total7dayTeam||'—');
   setText('s-gospel-personal',totalPersonal||'—');
   setText('s-gospel-rel',totalRel||'—');
+  setText('s-gospel-qq',totalQQ||'—');
   setText('s-gospel-total',totalGospelAll||'—');
   setText('d-local','—');setText('d-family','—');setText('d-church','—');
   setText('d-ques',totalQuesTeam||'—');setText('d-7day','—');setText('d-trainee','—');
@@ -776,45 +812,54 @@ function renderTab0(data,w){
   setText('r-decision',totalDecision||'—');
   setText('r-confirm',totalConfirm||'—');
   setText('r-reject',totalReject||'—');
-  setText('r-refuse','—');
+  setText('r-refuse',totalRefuse||'—');
   setText('r-total',(totalBeliever+totalDecision+totalConfirm+totalReject)||'—');
   setText('fu-7day',fu['7일후']||'—');
   setText('fu-24h',fu['24시간']||'—');
   setText('fu-worship',fu['예배']||'—');
   setText('fu-new',fu['새가족']||'—');
-  setText('fu-sat',fu['토요']||'—');
+  setText('fu-mokjang',fu['목장']||'—');
   setText('fu-none',fu['하지못']||'—');
   setText('fu-total',fuTotal||'—');
-  setText('s-active-jo',activeJo.size);
-  setText('s-inactive-jo',inactive);
-  setText('s-total-jo',totalJo);
-  setText('week-label-0',w+'주차 현황');
+  setText('s-active-jo', activeJo.size+'조');
+  setText('s-inactive-jo', (totalJo-activeJo.size)+'조');
+  setText('s-total-jo', totalJo+'조');
+  setText('week-label-0', w);
 
-  // 상세 테이블: 조별 구성원 항상 표시
+  // 주차 기간 계산 (주차 기반)
+  var weekPeriod = (function(week){
+    // 기준: 1주차 시작일 기준으로 계산 (설정값 없으면 공백)
+    return '';
+  })(w);
+  var periodEl = document.getElementById('week-period-0');
+  if(periodEl) periodEl.textContent = weekPeriod;
+
+  // 데이터 확인필요 경고 (복음제시 합계 < 대상자구분 합계)
+  var gospelTotal = totalGospelTeam+totalQuesTeam+total7dayTeam+totalPersonal+totalRel+totalQQ;
+  var targetTotal = data.length;
+  var warnEl = document.getElementById('data-warning-0');
+  if(warnEl) warnEl.style.display = (gospelTotal < targetTotal) ? 'block' : 'none';
+
+  // 상세 테이블: 구분 열 없이 렌더링
   var tb=document.getElementById('tb-weekly');
-
-  // 조 순서대로
-  var jos=[...new Set(MEMBERS.map(function(m){return m.jo;}))].sort(function(a,b){return a-b;});
-  var html='';
-  // 그룹 구분선 추적
   var lastGroup='';
+  var html='';
+  var jos=[...new Set(MEMBERS.map(function(m){return m.jo;}))].sort(function(a,b){return a-b;});
   jos.forEach(function(jo){
     var joMembers=MEMBERS.filter(function(m){return m.jo===jo;});
     var joRecs=data.filter(function(r){return String(r.jo)===String(jo);});
     var rowspan=joMembers.length;
-    // 그룹 구분행
     var grp=joMembers[0]&&joMembers[0].group;
     if(grp&&grp!==lastGroup){
       lastGroup=grp;
       var grpObj=CFG.groups.find(function(g){return g.id===grp;})||{name:grp+'그룹',leader:''};
-      html+='<tr class="group-row"><td colspan="29" style="text-align:left;padding-left:10px;">'+
+      html+='<tr class="group-row"><td colspan="28" style="text-align:left;padding-left:10px;">'+
         grp+'그룹'+(grpObj.leader?' — '+grpObj.leader:'')+
         '</td></tr>';
     }
-
+    var noData=!joRecs.length;
     joMembers.forEach(function(m,mi){
-      var rec=joRecs[0]; // 조 기록 (1건 기준)
-      var noData=!rec;
+      var rec=joRecs[0];
       var result=rec?rec.result:'';
       var resultCls=result==='결신'?'b-red':result==='이미신자'?'b-green':result==='확신'?'b-blue':'b-gray';
       var action=m.role==='리더'?(rec?rec.leaderAction:''):
@@ -822,49 +867,70 @@ function renderTab0(data,w){
                  (rec?rec.traineeAction:'');
       var isActive=action==='하였고';
       var isObs=action==='참관하였고';
-      var roleCls=m.role==='리더'?'color:#1565c0;font-weight:700;':m.role==='훈련자'?'color:#e65100;':
-                  'color:#666;';
+      var roleCls=m.role==='리더'?'color:#1565c0;font-weight:700;':m.role==='훈련자'?'color:#e65100;':'color:#666;';
 
-      html+='<tr style="'+(noData?'background:#fafafa;color:#bbb;':'')+'">'+
-        (mi===0?'<td class="td-jo" rowspan="'+rowspan+'">'+jo+'</td>':'') +
-        '<td class="td-name">'+m.name+'<br><span style="font-size:9px;'+roleCls+'">'+m.role+'</span></td>'+
+      html+='<tr class="'+(noData?'inactive-row':'')+'" style="'+(noData?'background:#fafafa;color:#bbb;':'')+'">'+
+        (mi===0?'<td class="td-jo" rowspan="'+rowspan+'">'+(noData?'<span style="color:#e65100;">':'')+jo+(noData?'</span>':'')+'</td>':'') +
+        '<td class="td-name" style="'+roleCls+'">'+m.name+'</td>'+
         '<td class="td-step" style="'+(noData?'color:#ccc;':'')+'">'+m.step+'</td>'+
-        '<td style="font-size:10px;">'+(noData?'<span style="color:#ccc;">미입력</span>':isActive?'팀전도':isObs?'참관':'<span style="color:var(--red)">불참</span>')+'</td>'+
-        '<td style="font-size:10px;color:#1a3a9e;font-weight:700;">'+(mi===0&&rec?rec.docNumber||'—':'')+'</td>'+
-        '<td style="font-size:10px;">'+(mi===0&&rec?rec.evangType||'—':'')+'</td>'+
-        '<td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>'+
-        '<td>'+(mi===0&&rec?rec.gospel||'—':'')+'</td>'+
-        '<td>'+(mi===0&&rec?rec.contact||'—':'')+'</td>'+
-        '<td>—</td>'+
-        // 진단
-        '<td>'+(mi===0&&rec?rec.heaven||'—':'')+'</td>'+
-        '<td>'+(mi===0&&rec?rec.reason||'—':'')+'</td>'+
-        '<td>'+(mi===0&&rec?'<span class="badge b-orange">'+(rec.diagResult?rec.diagResult.split('|')[0].replace('진단:','').trim():'—')+'</span>':'')+'</td>'+
-        // 결과
-        '<td>'+(mi===0&&rec?'<span class="badge '+resultCls+'">'+result+'</span>':'')+'</td>'+
-        // 복음참여
-        '<td>'+(isActive?'●':isObs?'○':'')+'</td>'+
-        '<td>—</td>'+
-        // 전복음 6열
-        '<td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>'+
-        // 후속양육 6열
-        '<td>'+(mi===0&&rec&&rec.followup&&rec.followup.indexOf('7일')>-1?'●':'')+'</td>'+
-        '<td>'+(mi===0&&rec&&rec.followup&&rec.followup.indexOf('24')>-1?'●':'')+'</td>'+
-        '<td>'+(mi===0&&rec&&rec.followup&&rec.followup.indexOf('예배')>-1?'●':'')+'</td>'+
-        '<td>'+(mi===0&&rec&&rec.followup&&rec.followup.indexOf('새가족')>-1?'●':'')+'</td>'+
-        '<td>'+(mi===0&&rec&&rec.followup&&(rec.followup.indexOf('하지')>-1||rec.followup.indexOf('못')>-1)?'●':'')+'</td>'+
-        '<td>'+(mi===0&&rec&&rec.followup&&rec.followup.indexOf('토요')>-1?'●':'')+'</td>'+
-        // 비고/불참
-        '<td style="font-size:10px;">'+(mi===0&&rec?rec.q13||'':'')+'</td>'+
-        '<td>'+(mi===0&&!rec?'<span style="color:#ccc;">-</span>':'')+'</td>'+
-        '</tr>';
+        (mi===0?(noData?
+          '<td rowspan="'+rowspan+'" colspan="15" style="color:#ccc;font-size:9px;text-align:left;padding-left:8px;">— 미실시 —</td>':
+          '<td rowspan="'+rowspan+'" style="font-size:10px;color:#1a3a9e;font-weight:700;">'+(rec.docNumber||'—')+'</td>'+
+          '<td rowspan="'+rowspan+'" style="font-size:10px;">'+(rec.evangType||'—')+'</td>'+
+          '<td rowspan="'+rowspan+'">—</td><td rowspan="'+rowspan+'">—</td>'+
+          '<td rowspan="'+rowspan+'" style="font-size:10px;">'+(rec.religion||'—')+'</td>'+
+          '<td rowspan="'+rowspan+'">'+(rec.gender||'—')+'</td>'+
+          '<td rowspan="'+rowspan+'">'+(rec.age||'—')+'</td>'+
+          '<td rowspan="'+rowspan+'" style="font-size:10px;">'+(rec.region||rec.location||'—')+'</td>'+
+          '<td rowspan="'+rowspan+'" style="font-size:10px;">'+(rec.relationMember||'—')+'</td>'+
+          '<td rowspan="'+rowspan+'" style="font-size:10px;">'+(rec.targetType||'—')+'</td>'+
+          '<td rowspan="'+rowspan+'" style="font-size:10px;">'+(rec.gospelPlace||'—')+'</td>'+
+          '<td rowspan="'+rowspan+'">'+(rec.heaven||'—')+'</td>'+
+          '<td rowspan="'+rowspan+'">'+(rec.reason||'—')+'</td>'+
+          '<td rowspan="'+rowspan+'"><span class="badge b-orange">'+(rec.diagResult?rec.diagResult.split('|')[0].replace('진단:','').trim():'—')+'</span></td>'+
+          '<td rowspan="'+rowspan+'"><span class="badge '+resultCls+'">'+result+'</span></td>'
+        ):'')+'';
+
+      // 복음참여 역할배분
+      var PARTS=['서론','은혜','인간','하나님','그리스도','믿음','결신','즉석양육'];
+      // 복음참여: 관계(팀)만 ●, 나머지는 ○
+      var PARTS_ET=rec?rec.evangType||rec.evang_type||'':'';
+      var marker=PARTS_ET==='관계(팀)'?'●':'○';
+      var mPart=m.role==='리더'?(rec?rec.leaderPart||rec.leader_part||'':''):
+               m.role==='훈련자'?(rec?rec.trainerPart||rec.trainer_part||'':''):
+               (rec?rec.traineePart||rec.trainee_part||'':'');
+      var marks=PARTS.map(function(p){
+        return (action==='하였고'||action==='참관하였고')&&mPart===p?marker:'';
+      });
+      html+=marks.map(function(mk){return '<td>'+mk+'</td>';}).join('');
+        (mi===0?
+          '<td rowspan="'+rowspan+'">'+(rec&&rec.followup&&rec.followup.indexOf('7일')>-1?'●':'—')+'</td>'+
+          '<td rowspan="'+rowspan+'">'+(rec&&rec.followup&&rec.followup.indexOf('24')>-1?'●':'—')+'</td>'+
+          '<td rowspan="'+rowspan+'">'+(rec&&rec.followup&&rec.followup.indexOf('예배')>-1?'●':'—')+'</td>'+
+          '<td rowspan="'+rowspan+'">'+(rec&&rec.followup&&rec.followup.indexOf('새가족')>-1?'●':'—')+'</td>'+
+          '<td rowspan="'+rowspan+'">'+(rec&&rec.followup&&(rec.followup.indexOf('하지')>-1||rec.followup.indexOf('못')>-1)?'●':'—')+'</td>'+
+          '<td rowspan="'+rowspan+'" style="font-size:10px;">'+(rec?rec.q13||'':'')+'</td>'+
+          '<td rowspan="'+rowspan+'">—</td>'
+        :'')+'</tr>';
     });
   });
   tb.innerHTML=html;
 }
-
-
-// ── TAB 1: 복음참여현황 (누적) ────────────────────────────────────────────────
+// 미실시 토글
+var _showInactive0=true;
+function toggleInactiveRows(){
+  _showInactive0=!_showInactive0;
+  document.querySelectorAll('#tb-weekly .inactive-row').forEach(function(r){
+    r.style.display=_showInactive0?'':'none';
+  });
+  var track=document.getElementById('toggle-track-0');
+  var thumb=document.getElementById('toggle-thumb-0');
+  var label=document.getElementById('toggle-label-0');
+  if(track) track.style.background=_showInactive0?'rgba(255,255,255,0.3)':'#4caf50';
+  if(thumb) thumb.style.left=_showInactive0?'2px':'18px';
+  if(label) label.textContent=_showInactive0?'미실시 포함':'미실시 제외';
+}
+// 미실시 토글: 복음참여현황 (누적) ────────────────────────────────────────────────
 function renderTab1(data,w){
   var tb=document.getElementById('tb-gospel');
   var totals={gospel:0,contact:0,target:0,week7:0,decision:0,believer:0,confirm:0,reject:0};
