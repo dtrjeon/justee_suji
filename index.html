@@ -1431,6 +1431,15 @@ function applyFormData(r){
     if(radio('heaven')) document.getElementById('diag-card').style.display='block';
   }
   syncPreview();
+
+  // ── 지연 재복원: 동적 UI 갱신 후 덮어쓰기 방지 ──────────
+  setTimeout(function(){
+    sv('report-date', r.date);
+    var rm2=document.getElementById('q3_relation_member');
+    if(rm2&&r.relation_member) rm2.value=r.relation_member;
+    sv('q4_job', r.job);
+    syncPreview();
+  }, 200);
 }
 
 function openPresetModal(){
