@@ -1436,10 +1436,30 @@ function applyFormData(r){
 
   // ── 지연 재복원: 동적 UI 갱신 후 덮어쓰기 방지 ──────────
   setTimeout(function(){
-    sv('report-date', r.date);
+    // 전도일 강제 복원
+    var dateEl=document.getElementById('report-date');
+    if(dateEl&&r.date) dateEl.value=r.date;
+
+    // 관계 조원 - 옵션에 없으면 직접 추가 후 선택
     var rm2=document.getElementById('q3_relation_member');
-    if(rm2&&r.relation_member) rm2.value=r.relation_member;
-    sv('q4_job', r.job);
+    if(rm2&&r.relation_member){
+      var found=false;
+      for(var i=0;i<rm2.options.length;i++){
+        if(rm2.options[i].value===r.relation_member){found=true;break;}
+      }
+      if(!found){
+        var opt=document.createElement('option');
+        opt.value=r.relation_member;
+        opt.textContent=r.relation_member;
+        rm2.appendChild(opt);
+      }
+      rm2.value=r.relation_member;
+    }
+
+    // 직업 강제 복원
+    var jobEl=document.getElementById('q4_job');
+    if(jobEl&&r.job) jobEl.value=r.job;
+
     syncPreview();
   }, 600);
 }
