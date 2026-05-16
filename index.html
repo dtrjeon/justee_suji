@@ -1349,6 +1349,8 @@ function applyFormData(r){
   // 조 · 팀 구성원
   var joSel=document.getElementById('q1_jo');
   if(joSel) joSel.value=r.jo||'';
+  // 조 변경 후 관계 드롭다운 옵션 먼저 채우기
+  buildRelationDropdown();
   sv('q2_leader',   r.leader);
   sv('q2_trainer',  r.trainer);
   sv('q2_trainee1', r.trainee1);
@@ -1439,7 +1441,7 @@ function applyFormData(r){
     if(rm2&&r.relation_member) rm2.value=r.relation_member;
     sv('q4_job', r.job);
     syncPreview();
-  }, 200);
+  }, 600);
 }
 
 function openPresetModal(){
