@@ -430,18 +430,17 @@ pre.code-block{background:#1a1e3a;color:#d4d4d4;padding:11px;border-radius:6px;f
     <p class="note-small" style="color:#777;margin-top:2px;">* 접촉횟수는 현장전도시 모든 만남을 포함합니다. / 복음제시결과는 자동등록됩니다.</p>
   </div>
   <div class="divider"></div>
-  <div class="sec"><div class="sec-lbl">3. 만난 분의 인적 정보</div>
-    <!-- 손글씨 OCR 버튼 -->
-    <div style="margin-bottom:10px;">
-      <div style="position:relative;width:100%;border-radius:8px;overflow:hidden;min-height:44px;">
-        <div style="width:100%;background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;padding:11px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;box-sizing:border-box;">
-          📷 손글씨 사진으로 자동입력
-        </div>
+  <div class="sec">
+    <div class="sec-lbl" style="position:relative;padding-right:40px;">
+      3. 만난 분의 인적 정보
+      <!-- 손글씨 OCR 아이콘 버튼 -->
+      <div style="position:absolute;right:0;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);width:28px;height:28px;flex-shrink:0;">
+        <div style="width:28px;height:28px;background:linear-gradient(135deg,#1565c0,#0d47a1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;">📷</div>
         <input type="file" id="ocr-file-input" accept="image/*"
           style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:99;font-size:16px;margin:0;padding:0;">
       </div>
-      <div id="ocr-status" style="display:none;margin-top:7px;background:#e3f2fd;border:1px solid rgba(21,101,192,0.2);border-radius:6px;padding:8px 12px;font-size:12px;color:#1565c0;font-weight:600;text-align:center;"></div>
     </div>
+    <div id="ocr-status" style="display:none;margin-bottom:8px;background:#e3f2fd;border:1px solid rgba(21,101,192,0.2);border-radius:6px;padding:8px 12px;font-size:12px;color:#1565c0;font-weight:600;text-align:center;"></div>
     <div style="display:flex;gap:8px;margin-bottom:10px;">
       <div class="fld" style="flex:1;margin-bottom:0;">
         <div class="lbl">관계 <span style="font-weight:400;font-size:10px;color:rgba(0,0,0,0.4);">(대상자 모신분)</span></div>
@@ -1266,7 +1265,7 @@ const ROLES=['서론','은혜','인간','하나님','그리스도','믿음','결
 const MEMBERS=[{id:'leader',label:'훈련자(조장)',color:'#1a3a9e'},{id:'trainer',label:'훈련자',color:'#2050c8'},{id:'trainee',label:'훈련생',color:'#5c7cbb'}];
 const DIAG_MAP={'있었고_믿음':{diag:'머리신자 / 이미신자',badge:'orange'},'있었고_etc':{diag:'착각비신자',badge:'red'},'없었고_믿음':{diag:'확신부족 / 비신자',badge:'blue-purple'},'없었고_etc':{diag:'비신자',badge:'purple'}};
 let currentMode='server';
-let scriptUrl=localStorage.getItem('apps_script_url')||'https://script.google.com/macros/s/AKfycbzABxUUzgRqg1IFEDLaKpaPtIxKbFQCHWALHQIPbKgcxcb2acFoTI83oi6uvnr29x15/exec';
+let scriptUrl=localStorage.getItem('apps_script_url')||'https://script.google.com/macros/s/AKfycbzyE6fQycaV2srd5UQWazDQ6lnqJ9bk1sDEk_LsVLSRIsMeFKnQwqpz3tqG4YQOSNJD/exec';
 var _lastSavedDiagResult='';
 
 var _autoSaveTimer=null;
