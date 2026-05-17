@@ -84,14 +84,15 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .tbl-head-sub{font-size:10px;color:var(--text3);}
 .tbl-scroll{overflow-x:auto;}
 /* 조별 상세 현황 선 스타일 */
-.tbl-scroll table td{border:1px solid rgba(32,80,200,0.18);}
-.tbl-scroll table tr.jo-row td{border-top:2px solid rgba(32,80,200,0.45)!important;}
+.tbl-scroll table td{border-right:1px solid rgba(32,80,200,0.15);border-bottom:1px solid rgba(32,80,200,0.15);}
+.tbl-scroll table td:last-child{border-right:none;}
+.tbl-scroll table tr.jo-row td{border-top:2px solid rgba(32,80,200,0.35);}
+.tbl-scroll table tr.group-row td{border-top:3px solid rgba(32,80,200,0.6);border-bottom:3px solid rgba(32,80,200,0.6);}
 .tbl-scroll table tr.inactive-row td{color:#bbb;background:#fafafa;}
-.tbl-scroll table tr.jo-row.inactive-row td{border-top:2px solid rgba(32,80,200,0.45)!important;}
 table{width:100%;border-collapse:collapse;font-size:11px;}
 th{background:#f0f4ff;color:var(--primary);font-weight:700;padding:8px 6px;text-align:center;border-bottom:2px solid var(--border);border-right:1px solid var(--border);font-size:10px;white-space:nowrap;}
 th:last-child{border-right:none;}
-td{padding:7px 6px;text-align:center;border-bottom:1px solid rgba(26,58,176,0.06);border-right:1px solid rgba(26,58,176,0.04);vertical-align:middle;}
+td{padding:7px 6px;text-align:center;border-bottom:1px solid rgba(26,58,176,0.08);border-right:1px solid rgba(26,58,176,0.08);vertical-align:middle;}
 td:last-child{border-right:none;}
 tr:hover td{background:#f7f9ff;}
 tr:last-child td{border-bottom:none;}
@@ -222,7 +223,7 @@ tr:last-child td{border-bottom:none;}
       <div class="stat-box-header">복음제시</div>
       <table style="font-size:10px;width:100%;border-collapse:collapse;">
         <tbody>
-          <tr><td colspan="2" class="td-left" style="background:#f0f4ff;font-weight:700;font-size:10px;color:#1a3ab0;padding:3px 6px;">팀전도(훈련생포함)</td></tr>
+          <tr><td colspan="2" class="td-left" style="background:#f0f4ff;font-weight:700;font-size:10px;color:#1a3ab0;padding:3px 6px;">팀전도<br>(훈련생포함)</td></tr>
           <tr><td class="td-left" style="padding:3px 6px;">관계(팀)</td><td id="s-gospel-team" style="font-weight:700;text-align:right;padding:3px 6px;">—</td></tr>
           <tr><td class="td-left" style="padding:3px 6px;">질문지(팀)</td><td id="s-ques-team" style="text-align:right;padding:3px 6px;">—</td></tr>
           <tr><td class="td-left" style="padding:3px 6px;">7일후(팀)</td><td id="s-7day-team" style="text-align:right;padding:3px 6px;">—</td></tr>
@@ -328,6 +329,7 @@ tr:last-child td{border-bottom:none;}
           <tr>
             <th rowspan="2">조</th>
             <th rowspan="2">이름</th>
+            <th rowspan="2">역할</th>
             <th rowspan="2">단계</th>
             <th rowspan="2">문서번호</th>
             <th rowspan="2">전도유형</th>
@@ -342,9 +344,10 @@ tr:last-child td{border-bottom:none;}
             <th rowspan="2">복음<br>전달</th>
             <th colspan="3">진단 질문</th>
             <th rowspan="2">결과</th>
-            <th colspan="8">복음 참여 (역할배분)</th>
+            <th rowspan="2">참관</th>
+            <th colspan="8" style="background:#dce6f7;">복음 참여 (역할배분)</th>
             <th colspan="6">후속양육 연결</th>
-            <th rowspan="2">비고</th>
+            <th rowspan="2" style="border-left:1px solid rgba(32,80,200,0.35);">비고</th>
             <th rowspan="2">불참자</th>
           </tr>
           <tr>
@@ -621,11 +624,10 @@ let CFG={
 let currentTab=0, currentWeek=1;
 let allData=[];   // 구글시트에서 불러온 전체 레코드
 
-// ── 초기화 ───────────────────────────────────────────────────────────────────
-// ── 비밀번호 (변경 필요) ────────────────────────────────
+// ── 비밀번호 ─────────────────────────────────────────────────────────────────
 // ⚠️ 보안을 위해 배포 전 반드시 변경하세요
-const ADMIN_PW = '5600';
-const LS_AUTH  = 'admin_auth_61';
+const ADMIN_PW='5600';
+const LS_AUTH='admin_auth_61';
 
 function checkPassword(){
   var val = document.getElementById('lock-input').value;
@@ -647,15 +649,13 @@ function onLockInput(){
 }
 
 window.onload=function(){
-  // 비밀번호 일시 해제 (테스트용)
-  document.getElementById('lock-screen').style.display = 'none';
-  // 릴리즈 시간: 파일 열람 시각 (한국시간)
+  // 비밀번호 화면 표시 (배포 시 아래 줄 제거)
+  document.getElementById('lock-screen').style.display='none';
+  // 릴리즈 시각 (한국시간)
   var el=document.getElementById('release-time');
   if(el){
-    var now=new Date();
-    var kst=new Date(now.getTime()+9*60*60*1000);
-    var s=kst.toISOString().replace('T',' ').slice(0,16);
-    el.textContent='v'+s;
+    var kst=new Date(Date.now()+9*60*60*1000);
+    el.textContent='v'+kst.toISOString().replace('T',' ').slice(0,16);
   }
 
   // 저장된 구성원 복원
@@ -909,26 +909,16 @@ function renderTab0(data,w){
   setText('s-total-jo', totalJo+'조');
   setText('week-label-0', w);
 
-  // 주차 기간 계산 (주차 기반)
-  var weekPeriod = (function(week){
-    // 기준: 1주차 시작일 기준으로 계산 (설정값 없으면 공백)
-    return '';
-  })(w);
-  var periodEl = document.getElementById('week-period-0');
-  if(periodEl) periodEl.textContent = weekPeriod;
+  // 데이터 오류 경고: 복음제시 합계 vs 대상자/결과 합계 불일치 시 표시
+  var gospelTotal=totalGospelAll, targetTotal=tgt.local+tgt.family+tgt.church+tgt.ques+tgt.day7+tgt.trainee;
+  var resultTotal=totalBeliever+totalDecision+totalConfirm+totalReject+totalRefuse;
+  var warnEl=document.getElementById('data-warning-0');
+  if(warnEl) warnEl.style.display=(gospelTotal<targetTotal||gospelTotal<resultTotal)?'flex':'none';
 
-  // 데이터 오류 경고: 복음제시 합계 < 대상자구분 합계 또는 관계/질문지결과 합계
-  var gospelTotal = totalGospelTeam+totalQuesTeam+total7dayTeam+totalPersonal+totalRel+totalQQ;
-  var targetTotal = tgt.local+tgt.family+tgt.church+tgt.ques+tgt.day7+tgt.trainee;
-  var resultTotal = totalBeliever+totalDecision+totalConfirm+totalReject+totalRefuse;
-  var warnEl = document.getElementById('data-warning-0');
-  if(warnEl) warnEl.style.display = (gospelTotal < targetTotal || gospelTotal < resultTotal) ? 'flex' : 'none';
-
-  // 상세 테이블: 구분 열 없이 렌더링
+  // 상세 테이블
   var tb=document.getElementById('tb-weekly');
   var lastGroup='';
   var html='';
-  var jos=[...new Set(MEMBERS.map(function(m){return m.jo;}))].sort(function(a,b){return a-b;});
   jos.forEach(function(jo){
     var joMembers=MEMBERS.filter(function(m){return m.jo===jo;});
     var joRecs=data.filter(function(r){return String(r.jo)===String(jo);});
@@ -937,7 +927,7 @@ function renderTab0(data,w){
     if(grp&&grp!==lastGroup){
       lastGroup=grp;
       var grpObj=CFG.groups.find(function(g){return g.id===grp;})||{name:grp+'그룹',leader:''};
-      html+='<tr class="group-row"><td colspan="28" style="text-align:left;padding-left:10px;">'+
+      html+='<tr class="group-row"><td colspan="30" style="text-align:left;padding-left:10px;">'+
         grp+'그룹'+(grpObj.leader?' — '+grpObj.leader:'')+
         '</td></tr>';
     }
@@ -953,6 +943,7 @@ function renderTab0(data,w){
       var isActive=action==='하였고';
       var isObs=action==='참관하였고';
       var roleCls=m.role==='리더'?'color:#111111;font-weight:700;':m.role==='훈련자'?'color:#1565c0;':'color:#666;';
+      var roleBadge=m.role==='리더'?'<span class="badge b-blue">조장</span>':m.role==='훈련자'?'<span class="badge b-green">훈련자</span>':'<span class="badge b-gray">훈련생</span>';
 
       var recStep = rec ? (
         m.role==='리더'   ? (rec.leaderStep  || '') :
@@ -964,6 +955,7 @@ function renderTab0(data,w){
       html+='<tr class="'+(noData?'jo-row inactive-row':'jo-row active-row')+'" style="'+(noData?'background:#fafafa;color:#bbb;':'')+'">'+
         (mi===0?'<td class="td-jo" rowspan="'+rowspan+'">'+(noData?'<span style="color:#e65100;">':'')+jo+(noData?'</span>':'')+'</td>':'') +
         '<td class="td-name" style="'+roleCls+'">'+m.name+'</td>'+
+        '<td>'+roleBadge+'</td>'+
         '<td class="td-step" style="'+(noData?'color:#ccc;':'')+'">'+displayStep+'</td>'+
         (mi===0?(noData?
           '<td rowspan="'+rowspan+'" colspan="15" style="color:#ccc;font-size:9px;text-align:left;padding-left:8px;">— 미실시 —</td>':
@@ -983,31 +975,38 @@ function renderTab0(data,w){
           '<td rowspan="'+rowspan+'"><span class="badge '+resultCls+'">'+result+'</span></td>'
         ):'')+'';
 
-      // 복음참여 역할배분
+      // 참관 — 조원별 개별 셀
+      html+='<td style="font-size:11px;text-align:center;color:#7b1fa2;">'+((!noData&&action==='참관하였고')?'◉':'—')+'</td>';
+
+      // 복음참여 역할배분 — 관계(팀):🔵 / 그 외:🟠
       var PARTS=['서론','은혜','인간','하나님','그리스도','믿음','결신','즉석양육'];
-      var PARTS_ET=rec?rec.evangType||rec.evang_type||'':'';
-      var isTeamRel=PARTS_ET==='관계(팀)';
-      var marker=isTeamRel?'🔵':'🟠';
-      var mPart=m.role==='리더'?(rec?rec.leaderPart||rec.leader_part||'':''):
-               m.role==='훈련자'?(rec?rec.trainerPart||rec.trainer_part||'':''):
-               (rec?rec.traineePart||rec.trainee_part||'':'');
-      var marks=PARTS.map(function(p){
-        return (action==='하였고'||action==='참관하였고')&&mPart===p?marker:'';
+      var isTeam=rec&&rec.evangType==='관계(팀)';
+      var mkChar=isTeam?'🔵':'🟠';
+      var mPart=m.role==='리더'  ?(rec?rec.leaderPart :''):
+               m.role==='훈련자'?(rec?rec.trainerPart:''):
+                                  (rec?rec.traineePart:'');
+      var partArr=mPart?mPart.split('|').map(function(s){return s.trim();}):[];
+      var partCells=PARTS.map(function(p){
+        if(action!=='하였고'&&action!=='참관하였고') return '<td style="font-size:9px;color:#ddd;text-align:center;">·</td>';
+        if(partArr.indexOf(p)>-1) return '<td style="font-size:10px;text-align:center;">'+mkChar+'</td>';
+        return '<td style="text-align:center;color:#ccc;font-size:10px;">·</td>';
       });
-      html+=marks.map(function(mk){return '<td style="font-size:12px;">'+mk+'</td>';}).join('');
-        (mi===0?
+      html+=partCells.join('');
+      // 후속양육 + 비고 (조당 첫 행만)
+      if(mi===0){
+        html+=
           '<td rowspan="'+rowspan+'">'+(rec&&rec.followup&&rec.followup.indexOf('7일')>-1?'●':'—')+'</td>'+
           '<td rowspan="'+rowspan+'">'+(rec&&rec.followup&&rec.followup.indexOf('24')>-1?'●':'—')+'</td>'+
           '<td rowspan="'+rowspan+'">'+(rec&&rec.followup&&rec.followup.indexOf('예배')>-1?'●':'—')+'</td>'+
           '<td rowspan="'+rowspan+'">'+(rec&&rec.followup&&rec.followup.indexOf('새가족')>-1?'●':'—')+'</td>'+
           '<td rowspan="'+rowspan+'">'+(rec&&rec.followup&&(rec.followup.indexOf('하지')>-1||rec.followup.indexOf('못')>-1)?'●':'—')+'</td>'+
-          '<td rowspan="'+rowspan+'" style="font-size:10px;">'+(rec?rec.q13||'':'')+'</td>'+
-          '<td rowspan="'+rowspan+'">—</td>'
-        :'')+'</tr>';
+          '<td rowspan="'+rowspan+'" style="font-size:10px;border-left:1px solid rgba(32,80,200,0.15);">'+(rec?rec.q13||'':'')+'</td>'+
+          '<td rowspan="'+rowspan+'">—</td>';
+      }
+      html+='</tr>';
     });
   });
   tb.innerHTML=html;
-  applyJoRowBorder();
   applyInactiveFilter();
 }
 // 미실시 토글 — 기본: 실시만(_showInactive0=false)
@@ -1027,31 +1026,13 @@ function toggleInactiveRows(){
   }
 }
 function applyInactiveFilter(){
-  // 렌더링 후 토글 상태 재적용
   document.querySelectorAll('#tb-weekly tr').forEach(function(r){
     if(r.classList.contains('inactive-row')){
       r.style.display=_showInactive0?'':'none';
     }
   });
 }
-
-function applyJoRowBorder(){
-  // jo-row 첫 행 모든 td (rowspan 포함)
-  document.querySelectorAll('#tb-weekly tr.jo-row').forEach(function(tr){
-    tr.querySelectorAll('td').forEach(function(td){
-      td.style.borderTop='2px solid rgba(32,80,200,0.45)';
-    });
-  });
-  // rowspan td가 jo-row에 속해 있으므로 위에서 커버됨
-  // 추가: group-row도 강조
-  document.querySelectorAll('#tb-weekly tr.group-row td').forEach(function(td){
-    td.style.borderTop='3px solid rgba(32,80,200,0.6)';
-    td.style.background='#dce6f7';
-    td.style.fontWeight='700';
-    td.style.color='#1a3ab0';
-  });
-}
-// 미실시 토글: 복음참여현황 (누적) ────────────────────────────────────────────────
+// ── TAB 1: 복음참여현황 (누적) ───────────────────────────────────────────────
 function renderTab1(data,w){
   var tb=document.getElementById('tb-gospel');
   var totals={gospel:0,contact:0,target:0,week7:0,decision:0,believer:0,confirm:0,reject:0};
