@@ -78,6 +78,11 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .tbl-head-title{font-size:11px;font-weight:700;color:var(--primary);letter-spacing:.5px;}
 .tbl-head-sub{font-size:10px;color:var(--text3);}
 .tbl-scroll{overflow-x:auto;}
+/* 조별 상세 현황 선 스타일 */
+.tbl-scroll table td{border:1px solid rgba(32,80,200,0.18);}
+.tbl-scroll table tr.jo-row td{border-top:2px solid rgba(32,80,200,0.45)!important;}
+.tbl-scroll table tr.inactive-row td{color:#bbb;background:#fafafa;}
+.tbl-scroll table tr.jo-row.inactive-row td{border-top:2px solid rgba(32,80,200,0.45)!important;}
 table{width:100%;border-collapse:collapse;font-size:11px;}
 th{background:#f0f4ff;color:var(--primary);font-weight:700;padding:8px 6px;text-align:center;border-bottom:2px solid var(--border);border-right:1px solid var(--border);font-size:10px;white-space:nowrap;}
 th:last-child{border-right:none;}
@@ -168,6 +173,7 @@ tr:last-child td{border-bottom:none;}
 <div class="topbar">
   <div class="topbar-title">61기 수주반 모니터링<span>EVANGELISM MONITORING</span></div>
   <div class="topbar-right">
+    <span style="font-size:9px;color:rgba(255,255,255,0.4);margin-right:4px;" id="release-time"></span>
     <div class="conn-badge"><span class="conn-dot" id="conn-dot"></span><span id="conn-label">미연결</span></div>
     <button class="tb-btn" onclick="openSettings()">⚙️ 설정</button>
   </div>
@@ -197,13 +203,13 @@ tr:last-child td{border-bottom:none;}
       <div id="data-warning-0" style="display:none;background:#fff3cd;color:#856404;border:1px solid #ffc107;border-radius:5px;padding:3px 10px;font-size:10px;font-weight:700;">⚠️ 데이터 확인필요</div>
       <div style="color:rgba(255,255,255,0.8);font-size:13px;font-weight:900;letter-spacing:1px;">
         결신율 &nbsp;<span style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:#fff;" id="wb-rate">—</span>
-        &nbsp;<span style="font-size:11px;color:rgba(255,255,255,0.6);">(<span id="s-decision-cnt">0</span>명)</span>
+        &nbsp;<span style="font-size:11px;color:rgba(255,255,255,0.6);">(<span id="s-decision-cnt">0</span>/<span id="s-rate-denom">0</span>명)</span>
       </div>
     </div>
   </div>
 
   <!-- 중단 4박스 + 실시현황 -->
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 72px;gap:8px;margin-bottom:12px;align-items:stretch;">
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 50px;gap:8px;margin-bottom:12px;align-items:stretch;">
 
     <!-- 복음제시 -->
     <div class="tbl-wrap" style="margin-bottom:0;">
@@ -299,11 +305,11 @@ tr:last-child td{border-bottom:none;}
     <div class="tbl-head" style="display:flex;justify-content:space-between;align-items:center;">
       <span class="tbl-head-title">조별 상세 현황 (<span id="week-label-0">—</span>주차 · <span id="week-period-0"></span>)</span>
       <div style="display:flex;align-items:center;gap:8px;">
-        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:10px;color:rgba(255,255,255,0.8);">
-          <span id="toggle-label-0">미실시 포함</span>
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:10px;color:var(--text3);">
+          <span id="toggle-label-0">미실시 포함 유무</span>
           <div style="position:relative;width:34px;height:18px;" onclick="toggleInactiveRows()">
-            <div id="toggle-track-0" style="width:34px;height:18px;background:rgba(255,255,255,0.3);border-radius:9px;transition:background .2s;"></div>
-            <div id="toggle-thumb-0" style="position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left .2s;"></div>
+            <div id="toggle-track-0" style="position:absolute;top:0;left:0;width:34px;height:18px;background:rgba(32,80,200,0.3);border-radius:9px;transition:background .2s;"></div>
+            <div id="toggle-thumb-0" style="position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>
           </div>
         </label>
       </div>
@@ -635,6 +641,14 @@ function onLockInput(){
 window.onload=function(){
   // 비밀번호 일시 해제 (테스트용)
   document.getElementById('lock-screen').style.display = 'none';
+  // 릴리즈 시간: 파일 열람 시각 (한국시간)
+  var el=document.getElementById('release-time');
+  if(el){
+    var now=new Date();
+    var kst=new Date(now.getTime()+9*60*60*1000);
+    var s=kst.toISOString().replace('T',' ').slice(0,16);
+    el.textContent='v'+s;
+  }
 
   // 저장된 구성원 복원
   var saved=localStorage.getItem('mon_members');
@@ -791,13 +805,16 @@ function renderTab0(data,w){
   });
 
   var totalGospelAll=totalGospelTeam+totalQuesTeam+total7dayTeam+totalPersonal+totalRel+totalQQ;
-  var rate=totalGospelAll>0?Math.round((totalDecision/totalGospelAll)*1000)/10:0;
+  var rTotal=totalBeliever+totalDecision+totalConfirm+totalReject+(totalRefuse||0);
+  var rateDenom=rTotal-totalBeliever-totalConfirm;
+  var rate=rateDenom>0?Math.round((totalDecision/rateDenom)*1000)/10:0;
   var fuTotal=Object.values(fu).reduce(function(a,b){return a+b;},0);
   var inactive=totalJo-activeJo.size;
 
   setText('wb-title',CFG.title+' [주간현황:'+w+'주]');
   setText('wb-rate',rate>0?rate+'%':'—');
   setText('s-decision-cnt',totalDecision);
+  setText('s-rate-denom',rateDenom);
   setText('s-gospel-team',totalGospelTeam||'—');
   setText('s-ques-team',totalQuesTeam||'—');
   setText('s-7day-team',total7dayTeam||'—');
@@ -867,9 +884,9 @@ function renderTab0(data,w){
                  (rec?rec.traineeAction:'');
       var isActive=action==='하였고';
       var isObs=action==='참관하였고';
-      var roleCls=m.role==='리더'?'color:#1565c0;font-weight:700;':m.role==='훈련자'?'color:#e65100;':'color:#666;';
+      var roleCls=m.role==='리더'?'color:#111111;font-weight:700;':m.role==='훈련자'?'color:#1565c0;':'color:#666;';
 
-      html+='<tr class="'+(noData?'inactive-row':'')+'" style="'+(noData?'background:#fafafa;color:#bbb;':'')+'">'+
+      html+='<tr class="'+(noData?'jo-row inactive-row':'jo-row active-row')+'" style="'+(noData?'background:#fafafa;color:#bbb;':'')+'">'+
         (mi===0?'<td class="td-jo" rowspan="'+rowspan+'">'+(noData?'<span style="color:#e65100;">':'')+jo+(noData?'</span>':'')+'</td>':'') +
         '<td class="td-name" style="'+roleCls+'">'+m.name+'</td>'+
         '<td class="td-step" style="'+(noData?'color:#ccc;':'')+'">'+m.step+'</td>'+
@@ -915,6 +932,7 @@ function renderTab0(data,w){
     });
   });
   tb.innerHTML=html;
+  applyJoRowBorder();
 }
 // 미실시 토글
 var _showInactive0=true;
@@ -926,9 +944,26 @@ function toggleInactiveRows(){
   var track=document.getElementById('toggle-track-0');
   var thumb=document.getElementById('toggle-thumb-0');
   var label=document.getElementById('toggle-label-0');
-  if(track) track.style.background=_showInactive0?'rgba(255,255,255,0.3)':'#4caf50';
+  if(track) track.style.background=_showInactive0?'rgba(32,80,200,0.3)':'#4caf50';
   if(thumb) thumb.style.left=_showInactive0?'2px':'18px';
-  if(label) label.textContent=_showInactive0?'미실시 포함':'미실시 제외';
+  if(label) label.textContent=_showInactive0?'미실시 포함 유무':'미실시 제외 유무';
+}
+
+function applyJoRowBorder(){
+  // jo-row 첫 행 모든 td (rowspan 포함)
+  document.querySelectorAll('#tb-weekly tr.jo-row').forEach(function(tr){
+    tr.querySelectorAll('td').forEach(function(td){
+      td.style.borderTop='2px solid rgba(32,80,200,0.45)';
+    });
+  });
+  // rowspan td가 jo-row에 속해 있으므로 위에서 커버됨
+  // 추가: group-row도 강조
+  document.querySelectorAll('#tb-weekly tr.group-row td').forEach(function(td){
+    td.style.borderTop='3px solid rgba(32,80,200,0.6)';
+    td.style.background='#dce6f7';
+    td.style.fontWeight='700';
+    td.style.color='#1a3ab0';
+  });
 }
 // 미실시 토글: 복음참여현황 (누적) ────────────────────────────────────────────────
 function renderTab1(data,w){
