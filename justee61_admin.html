@@ -306,7 +306,7 @@ tr:last-child td{border-bottom:none;}
       <span class="tbl-head-title">조별 상세 현황 (<span id="week-label-0">—</span>주차 · <span id="week-period-0"></span>)</span>
       <div style="display:flex;align-items:center;gap:8px;">
         <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:10px;color:var(--text3);">
-          <span id="toggle-label-0">미실시 포함 유무</span>
+          <span id="toggle-label-0">실시 포함유무</span>
           <div style="position:relative;width:34px;height:18px;" onclick="toggleInactiveRows()">
             <div id="toggle-track-0" style="position:absolute;top:0;left:0;width:34px;height:18px;background:rgba(32,80,200,0.3);border-radius:9px;transition:background .2s;"></div>
             <div id="toggle-thumb-0" style="position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>
@@ -583,7 +583,7 @@ const MEMBERS=[
 
 // ── 설정 ────────────────────────────────────────────────────────────────────
 let CFG={
-  url: localStorage.getItem('mon_url')||'https://script.google.com/macros/s/AKfycbxj1-Ki6u4LIPbmSlOIrEZ7Pn6ZGj6QaMxgk5NUoLY/exec',
+  url: localStorage.getItem('mon_url')||'https://script.google.com/macros/s/AKfycbxkxK9eVmITyjCMF6NxSOnbKSBBa-fPVw3ivf72wzOLYj0CXAxaGYuJynrwTV6Rm9-m/exec',
   title: localStorage.getItem('mon_title')||'61기 수주반',
   groups: JSON.parse(localStorage.getItem('mon_groups')||'null') || [
     {id:'A',name:'A그룹',leader:''},
@@ -703,26 +703,58 @@ async function loadData(){
 
 function parseRecords(raw){
   return raw.map(function(r){
-    var v=Object.values(r);
+    // GAS doGet은 { rowIndex, "저장일시": ..., "주차": ..., ... } 형태로 반환
+    // → 한국어 헤더 키로 직접 접근 (Object.values 인덱스 방식은 rowIndex로 인해 1칸 밀림 발생)
+    function g(k){ return (r[k]!==undefined&&r[k]!==null&&r[k]!=='') ? r[k] : ''; }
     return{
-      savedAt:v[0]||'',
-      week:num(v[1]), date:v[2]||'', docNumber:v[3]||'', evangType:v[4]||'', evangCount:num(v[5]),
-      jo:v[6]||'', leader:v[7]||'', trainer:v[8]||'', trainee:v[9]||'',
-      contact:num(v[10]), gospel:num(v[11]), target:num(v[12]), decision:num(v[13]),
-      reject:num(v[14]), confirm:num(v[15]), believer:num(v[16]),
-      location:v[17]||'', name:v[18]||'', age:v[19]||'',
-      marriage:v[20]||'', gender:v[21]||'',
-      meetPlace:v[22]||'', gospelPlace:v[23]||'',
-      targetType:v[24]||'', relationMember:v[25]||'',
-      religion:v[26]||'', job:v[27]||'',
-      heaven:v[28]||'', reason:v[29]||'', yeopjeop:v[30]||'',
-      diagResult:v[31]||'', testimony6:v[32]||'', testimony7:v[33]||'',
-      leaderPart:v[34]||'', leaderAction:v[35]||'',
-      trainerPart:v[36]||'', trainerAction:v[37]||'',
-      traineePart:v[38]||'', traineeAction:v[39]||'',
-      result:v[40]||'', immedNurture:v[41]||'', followup:v[42]||'',
-      followupReason:v[43]||'',
-      q10:v[44]||'', q11:v[45]||'', q12:v[46]||'', q13:v[47]||''
+      savedAt:  g('저장일시'),
+      week:     num(g('주차')),
+      date:     g('전도일'),
+      docNumber:g('문서번호'),
+      evangType:g('전도유형'),
+      evangCount:num(g('횟수')),
+      jo:       g('조'),
+      leader:   g('훈련자(조장)'),
+      trainer:  g('훈련자'),
+      trainee:  g('훈련생'),
+      contact:  num(g('접촉횟수')),
+      gospel:   num(g('복음제시')),
+      target:   num(g('대상자')),
+      decision: num(g('결신')),
+      reject:   num(g('보류/거절')),
+      confirm:  num(g('확신')),
+      believer: num(g('이미신자')),
+      location: g('거주지역'),
+      name:     g('성씨'),
+      age:      g('나이'),
+      marriage: g('결혼여부'),
+      gender:   g('성별'),
+      meetPlace:g('만난장소'),
+      gospelPlace:g('복음제시장소'),
+      targetType:g('대상자구분'),
+      relationMember:g('관계조원'),
+      religion: g('종교배경'),
+      job:      g('직업'),
+      heaven:   g('천국확신'),
+      reason:   g('이유대답'),
+      yeopjeop: g('영접여부'),
+      diagResult:g('진단결과'),
+      testimony6:g('간증6'),
+      testimony7:g('간증7'),
+      leaderPart:  g('훈련자(조장)역할'),
+      leaderAction:g('훈련자(조장)행동'),
+      trainerPart: g('훈련자역할'),
+      trainerAction:g('훈련자행동'),
+      traineePart: g('훈련생역할'),
+      traineeAction:g('훈련생행동'),
+      result:   g('결과'),
+      immedNurture:g('즉석양육'),
+      followup: g('후속양육'),
+      followupReason:g('하지못한사유'),
+      q10:      g('느낀점(10)'),
+      q11:      g('문제점(11)'),
+      q12:      g('기도제목(12)'),
+      q13:      g('기타(13)')
     };
   });
 }
@@ -749,6 +781,7 @@ function renderTab0(data,w){
   var totalGospelTeam=0,totalQuesTeam=0,total7dayTeam=0,totalPersonal=0,totalRel=0,totalQQ=0;
   var totalDecision=0,totalBeliever=0,totalConfirm=0,totalReject=0,totalRefuse=0;
   var fu={'7일후':0,'24시간':0,'예배':0,'새가족':0,'목장':0,'하지못':0};
+  var tgt={local:0,family:0,church:0,ques:0,day7:0,trainee:0};
   var activeJo=new Set();
   var totalJo=new Set(MEMBERS.map(function(m){return m.jo;})).size||10;
   var leaderCnt=0,trainerCnt=0,traineeCnt=0;
@@ -782,6 +815,16 @@ function renderTab0(data,w){
     totalBeliever+=Number(r.believer||0);
     totalConfirm+=Number(r.confirm||0);
     totalReject+=Number(r.reject||0);
+    // 거절: diagResult 또는 result에서 집계
+    if((r.diagResult||'').indexOf('거절')>-1||(r.result||'')==='거절') totalRefuse++;
+    // 대상자구분 집계
+    var tt=r.targetType||'';
+    if(tt.indexOf('지인')>-1||tt.indexOf('지인가족')>-1) tgt.local++;
+    else if(tt.indexOf('가족')>-1) tgt.family++;
+    else if(tt.indexOf('지구촌')>-1||tt.indexOf('교인')>-1) tgt.church++;
+    else if(tt.indexOf('질문지')>-1) tgt.ques++;
+    else if(tt.indexOf('7일')>-1) tgt.day7++;
+    else if(tt.indexOf('훈련생')>-1) tgt.trainee++;
     var fk=fuKey(r.followup);
     if(fk) fu[fk]++;
   });
@@ -822,15 +865,20 @@ function renderTab0(data,w){
   setText('s-gospel-rel',totalRel||'—');
   setText('s-gospel-qq',totalQQ||'—');
   setText('s-gospel-total',totalGospelAll||'—');
-  setText('d-local','—');setText('d-family','—');setText('d-church','—');
-  setText('d-ques',totalQuesTeam||'—');setText('d-7day','—');setText('d-trainee','—');
-  setText('d-total',data.length||'—');
+  setText('d-local',  tgt.local  ||'—');
+  setText('d-family', tgt.family ||'—');
+  setText('d-church', tgt.church ||'—');
+  setText('d-ques',   tgt.ques   ||'—');
+  setText('d-7day',   tgt.day7   ||'—');
+  setText('d-trainee',tgt.trainee||'—');
+  var tgtTotal=tgt.local+tgt.family+tgt.church+tgt.ques+tgt.day7+tgt.trainee;
+  setText('d-total',  tgtTotal   ||'—');
   setText('r-believer',totalBeliever||'—');
   setText('r-decision',totalDecision||'—');
-  setText('r-confirm',totalConfirm||'—');
-  setText('r-reject',totalReject||'—');
-  setText('r-refuse',totalRefuse||'—');
-  setText('r-total',(totalBeliever+totalDecision+totalConfirm+totalReject)||'—');
+  setText('r-confirm', totalConfirm ||'—');
+  setText('r-reject',  totalReject  ||'—');
+  setText('r-refuse',  totalRefuse  ||'—');
+  setText('r-total',(totalBeliever+totalDecision+totalConfirm+totalReject+totalRefuse)||'—');
   setText('fu-7day',fu['7일후']||'—');
   setText('fu-24h',fu['24시간']||'—');
   setText('fu-worship',fu['예배']||'—');
@@ -874,7 +922,8 @@ function renderTab0(data,w){
         grp+'그룹'+(grpObj.leader?' — '+grpObj.leader:'')+
         '</td></tr>';
     }
-    var noData=!joRecs.length;
+    // 데이터가 있어도 문서번호가 없으면 미실시로 처리 (실시만 표시 토글 기준)
+    var noData=!joRecs.length || !joRecs[0].docNumber;
     joMembers.forEach(function(m,mi){
       var rec=joRecs[0];
       var result=rec?rec.result:'';
@@ -938,15 +987,18 @@ function renderTab0(data,w){
 var _showInactive0=true;
 function toggleInactiveRows(){
   _showInactive0=!_showInactive0;
-  document.querySelectorAll('#tb-weekly .inactive-row').forEach(function(r){
-    r.style.display=_showInactive0?'':'none';
+  // _showInactive0=true: 전체표시 / false: 실시 조만 표시(inactive-row 숨김)
+  document.querySelectorAll('#tb-weekly tr').forEach(function(r){
+    if(r.classList.contains('inactive-row')){
+      r.style.display=_showInactive0?'':'none';
+    }
   });
   var track=document.getElementById('toggle-track-0');
   var thumb=document.getElementById('toggle-thumb-0');
   var label=document.getElementById('toggle-label-0');
   if(track) track.style.background=_showInactive0?'rgba(32,80,200,0.3)':'#4caf50';
   if(thumb) thumb.style.left=_showInactive0?'2px':'18px';
-  if(label) label.textContent=_showInactive0?'미실시 포함 유무':'미실시 제외 유무';
+  if(label) label.textContent=_showInactive0?'실시 포함유무':'실시만 표시';
 }
 
 function applyJoRowBorder(){
