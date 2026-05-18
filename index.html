@@ -1269,7 +1269,7 @@ const ROLES=['서론','은혜','인간','하나님','그리스도','믿음','결
 const MEMBERS=[{id:'leader',label:'훈련자(조장)',color:'#1a3a9e'},{id:'trainer',label:'훈련자',color:'#2050c8'},{id:'trainee',label:'훈련생',color:'#5c7cbb'}];
 const DIAG_MAP={'있었고_믿음':{diag:'머리신자 / 이미신자',badge:'orange'},'있었고_etc':{diag:'착각비신자',badge:'red'},'없었고_믿음':{diag:'확신부족 / 비신자',badge:'blue-purple'},'없었고_etc':{diag:'비신자',badge:'purple'}};
 let currentMode='server';
-let scriptUrl=localStorage.getItem('apps_script_url')||'https://script.google.com/macros/s/AKfycbxkxK9eVmITyjCMF6NxSOnbKSBBa-fPVw3ivf72wzOLYj0CXAxaGYuJynrwTV6Rm9-m/exec';
+let scriptUrl=localStorage.getItem('apps_script_url')||'https://script.google.com/macros/s/AKfycbwidGQmyeLCVRBXEGeLkX3mM7USYcT5HGIULkmUjuH07ew966dcF4PRgxLtWvWIGPV0/exec';
 var _lastSavedDiagResult='';
 
 var _autoSaveTimer=null;
@@ -1529,11 +1529,11 @@ const DEFAULT_JO=[
   {jo:'3', leader:'이미경', leaderStep:'4', trainer:'배현주', trainerStep:'2', trainee:'강동우', traineeStep:'1', group:'A', ban:'수지주일반'},
   {jo:'4', leader:'임원기', leaderStep:'3', trainer:'이나경', trainerStep:'2', trainee:'이지연', traineeStep:'1', group:'B', ban:'수지주일반'},
   {jo:'5', leader:'윤성원', leaderStep:'3', trainer:'박길순', trainerStep:'2', trainee:'강영미', traineeStep:'1', group:'B', ban:'수지주일반'},
-  {jo:'6', leader:'성기현', leaderStep:'3', trainer:'안희정', trainerStep:'2', trainee:'조은진', traineeStep:'1', group:'B', ban:'수지주일반'},
-  {jo:'7', leader:'안현주', leaderStep:'4', trainer:'김용대', trainerStep:'2', trainee:'이희자', traineeStep:'1', group:'C', ban:'수지주일반'},
-  {jo:'8', leader:'김성현', leaderStep:'4', trainer:'김희정', trainerStep:'2', trainee:'정현주', traineeStep:'1', group:'C', ban:'수지주일반'},
-  {jo:'9', leader:'박선영', leaderStep:'3', trainer:'임주현', trainerStep:'2', trainee:'김진우', traineeStep:'1', group:'D', ban:'수지주일반'},
-  {jo:'10',leader:'정은진', leaderStep:'4', trainer:'이선영', trainerStep:'2', trainee:'김정옥', traineeStep:'1', group:'D', ban:'수지주일반'},
+  {jo:'6', leader:'성기현', leaderStep:'4', trainer:'안희정', trainerStep:'2', trainee:'조은진', traineeStep:'1', group:'B', ban:'수지주일반'},
+  {jo:'7', leader:'안현주', leaderStep:'5', trainer:'김용대', trainerStep:'2', trainee:'이희자', traineeStep:'1', group:'C', ban:'수지주일반'},
+  {jo:'8', leader:'김성현', leaderStep:'3', trainer:'김희정', trainerStep:'2', trainee:'정현주', traineeStep:'1', group:'C', ban:'수지주일반'},
+  {jo:'9', leader:'박선영', leaderStep:'5', trainer:'임주현', trainerStep:'3', trainee:'김진우', traineeStep:'1', group:'D', ban:'수지주일반'},
+  {jo:'10',leader:'정은진', leaderStep:'H', trainer:'이선영', trainerStep:'2', trainee:'김정옥', traineeStep:'1', group:'D', ban:'수지주일반'},
   {jo:'11',leader:'김윤희', leaderStep:'3', trainer:'박희철', trainerStep:'2', trainee:'최정화', traineeStep:'1', group:'D', ban:'수지주일반'}
 ];
 function getJoData(){
@@ -1813,7 +1813,21 @@ async function loadJoFromServer(){
     var res=await fetch(scriptUrl+'?action=get_jo');
     var json=await res.json();
     if(json.status==='ok'&&json.joData&&json.joData.length){
-      saveJoDataLS(json.joData);
+      // 단계 정보 없는 경우 DEFAULT_JO에서 보완 후 저장
+      var joDataWithStep=json.joData.map(function(j){
+        if(!j.leaderStep&&!j.trainerStep&&!j.traineeStep){
+          var def=DEFAULT_JO.find(function(dj){return String(dj.jo)===String(j.jo);});
+          if(def){
+            j.leaderStep=def.leaderStep||'';
+            j.trainerStep=def.trainerStep||'';
+            j.traineeStep=def.traineeStep||'';
+          }
+        }
+        return j;
+      });
+      saveJoDataLS(joDataWithStep);
+      // 단계 보완된 데이터를 서버에도 다시 저장
+      syncJoToServer(joDataWithStep);
       buildJoDropdown();
       // ban은 고정값, group은 조별 데이터에 포함되어 있으므로 별도 저장 불필요
       localStorage.setItem('suju_ban', '수지주일반');
