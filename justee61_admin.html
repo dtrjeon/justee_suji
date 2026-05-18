@@ -1266,9 +1266,11 @@ function renderTab3(selectedWeek){
     var believer=sum(wData,'believer');
     var confirm=sum(wData,'confirm');
     var reject=sum(wData,'reject');
+    // 복음제시 = 결신 + 보류/거절 + 확신 + 이미신자
+    var gospelCalc=decision+reject+confirm+believer;
     var gospelAll=gospel+rel;
     var rTotal=believer+decision+confirm+reject;
-    var rateDenom=gospel-confirm-believer;
+    var rateDenom=gospelCalc-confirm-believer;
     var rate=rateDenom>0?Math.round((decision/rateDenom)*1000)/10:0;
     var isCur=w===selectedWeek;
 
@@ -1284,6 +1286,7 @@ function renderTab3(selectedWeek){
     // TOTAL: 1주 ~ 선택주차까지만 누적
     if(w<=selectedWeek){
       totals.active+=active;totals.inactive+=inactive;totals.gospel+=gospel;
+      totals.gospelCalc=(totals.gospelCalc||0)+gospelCalc;
       totals.rel+=rel;totals.ques+=ques;totals.decision+=decision;
       totals.imisinja+=believer;totals.confirm+=confirm;totals.reject+=reject;
       totals.gospelFinal+=gospelAll;
@@ -1303,9 +1306,8 @@ function renderTab3(selectedWeek){
       totals.tgtAll    =(totals.tgtAll    ||0)+tgtAll;
     }
 
-    // 비교: gospel(복음제시) = 결신+보류/거절+확신+이미신자 검증
-    var chkSum=decision+reject+confirm+believer;
-    var chkMatch=gospel>0&&gospel===chkSum;
+    // 정합성: 입력한 복음제시(gospel) = 계산된 복음제시(gospelCalc) 검증
+    var chkMatch=gospel>0&&gospel===gospelCalc;
 
     html+='<tr'+(isCur?' class="week-acc-row-cur"':'')+'>'+
       '<td><b>'+w+'주</b></td>'+
@@ -1328,25 +1330,25 @@ function renderTab3(selectedWeek){
       '<td>'+(tgtTrain ||'—')+'</td>'+
       '<td>'+(tgtAll   ||'—')+'</td>'+
       // 결과
-      '<td>'+(gospel||'—')+'</td>'+
+      '<td>'+(gospelCalc||'—')+'</td>'+
       '<td>'+(decision?'<b style="color:var(--red)">'+decision+'</b>':'—')+'</td>'+
       '<td>'+(reject||'—')+'</td>'+
       '<td>'+(confirm||'—')+'</td>'+
       '<td>'+(believer||'—')+'</td>'+
       '<td>'+(rel||'—')+'</td>'+
       '<td style="border-right:2px solid #8fa3d0 !important;">'+(rate>0?'<b style="color:var(--red)">'+rate+'%</b>':'—')+'</td>'+
-      '<td style="font-weight:700;color:'+(gospel>0?(chkMatch?'var(--green)':'var(--red)'):'var(--text2)')+'">'+
-        (gospel>0?(chkMatch?'T':'F'):'—')+
+      '<td style="font-weight:700;color:'+(gospelCalc>0?(chkMatch?'var(--green)':'var(--red)'):'var(--text2)')+'">'+
+        (gospelCalc>0?(chkMatch?'T':'F'):'—')+
       '</td>'+
       '</tr>';
   }
 
   tb.innerHTML=html;
 
-  var totalRateDenom=totals.gospel-totals.confirm-totals.imisinja;
+  var totalGospelCalc=totals.gospelCalc||0;
+  var totalRateDenom=totalGospelCalc-totals.confirm-totals.imisinja;
   var totalRate=totalRateDenom>0?Math.round((totals.decision/totalRateDenom)*1000)/10:0;
-  var totalChkSum=totals.decision+totals.reject+totals.confirm+totals.imisinja;
-  var totalChkMatch=totals.gospel>0&&totals.gospel===totalChkSum;
+  var totalChkMatch=totals.gospel>0&&totals.gospel===totalGospelCalc;
   document.getElementById('tf-weekly-acc').innerHTML=
     '<td><b>1~'+selectedWeek+'주<br>TOTAL</b></td>'+
     '<td>'+totals.active+'</td><td>'+totals.inactive+'</td>'+
@@ -1364,15 +1366,15 @@ function renderTab3(selectedWeek){
     '<td>'+(totals.tgt7day  ||0)+'</td>'+
     '<td>'+(totals.tgtTrain ||0)+'</td>'+
     '<td>'+(totals.tgtAll   ||0)+'</td>'+
-    '<td>'+totals.gospel+'</td>'+
+    '<td>'+totalGospelCalc+'</td>'+
     '<td><b style="color:var(--red)">'+totals.decision+'</b></td>'+
     '<td>'+totals.reject+'</td>'+
     '<td>'+totals.confirm+'</td>'+
     '<td>'+totals.imisinja+'</td>'+
     '<td>'+totals.rel+'</td>'+
     '<td style="border-right:2px solid #8fa3d0 !important;"><b style="color:var(--red)">'+(totalRate>0?totalRate+'%':'—')+'</b></td>'+
-    '<td style="font-weight:700;color:'+(totals.gospel>0?(totalChkMatch?'var(--green)':'var(--red)'):'var(--text2)')+'">'+
-      (totals.gospel>0?(totalChkMatch?'T':'F'):'—')+
+    '<td style="font-weight:700;color:'+(totalGospelCalc>0?(totalChkMatch?'var(--green)':'var(--red)'):'var(--text2)')+'">'+
+      (totalGospelCalc>0?(totalChkMatch?'T':'F'):'—')+
     '</td>';
 
   setText('wb-rate-3',totalRate>0?totalRate+'%':'—');
