@@ -72,7 +72,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 /* TABLE */
 .tbl-wrap{background:var(--card);border-radius:10px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px;}
-.tbl-wrap-sticky{overflow:visible !important;}
 .tbl-wrap table{height:100%;}
 .tbl-wrap tr[style*="background:#f0f4ff"] td{height:26px !important;font-weight:700;border-top:1.5px solid rgba(32,80,200,0.2)!important;}
 /* 4개 집계 테이블 tfoot 항상 바닥 고정 */
@@ -84,27 +83,15 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .tbl-head-title{font-size:11px;font-weight:700;color:var(--primary);letter-spacing:.5px;}
 .tbl-head-sub{font-size:10px;color:var(--text3);}
 .tbl-scroll{overflow-x:auto;}
-.tbl-wrap-sticky .tbl-scroll{overflow-x:auto;overflow-y:visible;}
-/* 주차별 현황 테이블 — 1~3열 좌측 고정 */
-.weekly-acc-tbl th:nth-child(1),
-.weekly-acc-tbl td:nth-child(1){position:sticky;left:0;z-index:3;background:#f0f4ff;}
-.weekly-acc-tbl tbody td:nth-child(1){background:#fff;}
-.weekly-acc-tbl tfoot td:nth-child(1){background:#f0f4ff;}
-.weekly-acc-tbl th:nth-child(2),
-.weekly-acc-tbl td:nth-child(2){position:sticky;z-index:3;background:#f0f4ff;}
-.weekly-acc-tbl tbody td:nth-child(2){background:#fff;}
-.weekly-acc-tbl tfoot td:nth-child(2){background:#f0f4ff;}
-.weekly-acc-tbl th:nth-child(3),
-.weekly-acc-tbl td:nth-child(3){position:sticky;z-index:3;background:#f0f4ff;border-right:2px solid #8fa3d0 !important;}
-.weekly-acc-tbl tbody td:nth-child(3){background:#fff;}
-.weekly-acc-tbl tfoot td:nth-child(3){background:#f0f4ff;}
-.weekly-acc-tbl tbody tr:hover td:nth-child(1),
-.weekly-acc-tbl tbody tr:hover td:nth-child(2),
-.weekly-acc-tbl tbody tr:hover td:nth-child(3){background:#f7f9ff;}
-.week-acc-row-cur td:nth-child(1),
-.week-acc-row-cur td:nth-child(2),
-.week-acc-row-cur td:nth-child(3){background:#fefce8 !important;}
+/* 복음제시현황 주차별 테이블 — border-collapse 방식 */
 .weekly-acc-tbl{border-collapse:collapse;border-top:1px solid #c5cde8;border-left:1px solid #c5cde8;}
+/* 1열(주차) 고정 */
+.weekly-acc-tbl th:nth-child(1),
+.weekly-acc-tbl td:nth-child(1){position:sticky;left:0;z-index:4;background:#f0f4ff;box-shadow:2px 0 4px rgba(26,58,176,0.08);border-right:2px solid #8fa3d0 !important;}
+.weekly-acc-tbl tbody td:nth-child(1){background:#fff;border-right:2px solid #8fa3d0 !important;}
+.weekly-acc-tbl tfoot td:nth-child(1){background:#f0f4ff;border-right:2px solid #8fa3d0 !important;}
+.weekly-acc-tbl tbody tr:hover td:nth-child(1){background:#f7f9ff;}
+.week-acc-row-cur td:nth-child(1){background:#fefce8 !important;}
 .weekly-acc-tbl th,
 .weekly-acc-tbl td{border-right:1px solid #c5cde8;border-bottom:1px solid #c5cde8;font-size:10px;}
 .tbl-scroll table.weekly-acc-tbl th,
@@ -509,23 +496,24 @@ tr:last-child td{border-bottom:none;}
   </div>
 
   <div class="sec-title">주차별 복음제시 누적 현황</div>
-  <div class="tbl-wrap tbl-wrap-sticky">
-    <div class="tbl-head">
+  <div class="tbl-wrap" style="overflow:visible;border-radius:10px;">
+    <div class="tbl-head" style="border-radius:10px 10px 0 0;background:var(--card);">
       <span class="tbl-head-title">주차별 현황 테이블 <span style="font-size:10px;font-weight:400;color:rgba(40,50,90,0.5);">(노란색 = 선택 주차)</span></span>
       <span style="font-size:10px;color:rgba(40,50,90,0.45);margin-left:auto;">※ 접촉횟수는 결신율 미포함</span>
     </div>
-    <div class="tbl-scroll">
+    <div class="tbl-scroll" style="overflow-x:auto;border-radius:0 0 10px 10px;">
       <table class="weekly-acc-tbl">
         <thead>
           <tr>
-            <th rowspan="2">주차</th>
+            <th style="border-right:2px solid #8fa3d0;">수주반</th>
             <th colspan="2" style="background:#1a3a9e;color:#fff;border-right:2px solid #8fa3d0;">전체조</th>
             <th colspan="7" style="background:#2a5cd8;color:#fff;border-right:2px solid #8fa3d0;">복음제시</th>
             <th colspan="7" style="background:#5c8ae0;color:#fff;border-right:2px solid #8fa3d0;">대상자 구분</th>
             <th colspan="6" style="background:#2a5cd8;color:#fff;border-right:2px solid #8fa3d0;">관계/질문지 결과</th>
-            <th rowspan="2">결신율</th><th rowspan="2">정합성</th>
+            <th rowspan="2" style="border-right:2px solid #8fa3d0;">결신율</th><th rowspan="2">정합성</th>
           </tr>
           <tr>
+            <th style="border-right:2px solid #8fa3d0;">주차</th>
             <th style="border-right:none;">실시</th><th style="border-right:2px solid #8fa3d0;">미실시</th>
             <th>관계(팀)</th><th>질문지(팀)</th><th>7일후(팀)</th><th>개인</th><th>관계</th><th>QQ</th><th style="border-right:2px solid #8fa3d0;">합계</th>
             <th>지인/지인가족</th><th>가족</th><th>지구촌교인</th><th>질문지</th><th>7일후</th><th>훈련생</th><th style="border-right:2px solid #8fa3d0;">합계</th>
@@ -553,6 +541,22 @@ tr:last-child td{border-bottom:none;}
     <div class="modal-section">
       <label>기수 / 반 이름</label>
       <input type="text" id="set-title" placeholder="예: 61기 수주반">
+    </div>
+
+    <div class="modal-section">
+      <label>훈련 기간 <span style="font-size:10px;font-weight:400;color:var(--text3);">시작일 기준 주차 자동 계산 (월~일 1주)</span></label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div style="flex:1;">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">시작일</div>
+          <input type="date" id="set-train-start" onchange="updateTrainPeriodInfo()" style="width:100%;padding:8px;border:1px solid rgba(0,0,20,0.15);border-radius:6px;font-size:14px;font-family:'Noto Sans KR',sans-serif;">
+        </div>
+        <div style="padding-top:16px;color:var(--text3);">~</div>
+        <div style="flex:1;">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">종료일</div>
+          <input type="date" id="set-train-end" onchange="updateTrainPeriodInfo()" style="width:100%;padding:8px;border:1px solid rgba(0,0,20,0.15);border-radius:6px;font-size:14px;font-family:'Noto Sans KR',sans-serif;">
+        </div>
+      </div>
+      <div id="train-period-info" style="font-size:10px;color:var(--text3);margin-top:4px;text-align:right;"></div>
     </div>
 
     <div class="modal-section">
@@ -659,6 +663,8 @@ const MEMBERS=[
 let CFG={
   url: localStorage.getItem('mon_url')||'https://script.google.com/macros/s/AKfycbymlmP5-hoctVgxT2cweqJNFHoTjYO3ujLT457u3ce3t8uUcjOPYYEg-ClzvsJy4mbj/exec',
   title: localStorage.getItem('mon_title')||'61기 수주반',
+  trainStart: localStorage.getItem('mon_trainStart')||'',
+  trainEnd:   localStorage.getItem('mon_trainEnd')||'',
   groups: JSON.parse(localStorage.getItem('mon_groups')||'null') || [
     {id:'A',name:'A그룹',leader:''},
     {id:'B',name:'B그룹',leader:''},
@@ -684,7 +690,24 @@ let CFG={
   })()
 };
 
-let currentTab=0, currentWeek=1;
+function calcCurrentWeek(){
+  if(!CFG.trainStart) return 1;
+  // 훈련 시작일의 월요일 기준으로 계산
+  var start=new Date(CFG.trainStart);
+  // 시작일이 속한 주의 월요일로 맞춤
+  var startDay=start.getDay(); // 0=일, 1=월 ... 6=토
+  var diffToMon=startDay===0?-6:1-startDay; // 해당 주 월요일로 이동
+  var monday=new Date(start);
+  monday.setDate(start.getDate()+diffToMon);
+  monday.setHours(0,0,0,0);
+
+  var now=new Date();
+  now.setHours(0,0,0,0);
+
+  var diff=Math.floor((now-monday)/(1000*60*60*24*7))+1;
+  return Math.min(Math.max(diff,1),13);
+}
+let currentTab=0, currentWeek=calcCurrentWeek();
 let allData=[];   // 구글시트에서 불러온 전체 레코드
 
 // ── 비밀번호 ─────────────────────────────────────────────────────────────────
@@ -1310,7 +1333,7 @@ function renderTab3(selectedWeek){
       '<td>'+(confirm||'—')+'</td>'+
       '<td>'+(believer||'—')+'</td>'+
       '<td>'+(rel||'—')+'</td>'+
-      '<td>'+(rate>0?'<b style="color:var(--red)">'+rate+'%</b>':'—')+'</td>'+
+      '<td style="border-right:2px solid #8fa3d0 !important;">'+(rate>0?'<b style="color:var(--red)">'+rate+'%</b>':'—')+'</td>'+
       '<td style="font-weight:700;color:'+(gospel>0?(chkMatch?'var(--green)':'var(--red)'):'var(--text2)')+'">'+
         (gospel>0?(chkMatch?'T':'F'):'—')+
       '</td>'+
@@ -1346,36 +1369,22 @@ function renderTab3(selectedWeek){
     '<td>'+totals.confirm+'</td>'+
     '<td>'+totals.imisinja+'</td>'+
     '<td>'+totals.rel+'</td>'+
-    '<td><b style="color:var(--red)">'+(totalRate>0?totalRate+'%':'—')+'</b></td>'+
+    '<td style="border-right:2px solid #8fa3d0 !important;"><b style="color:var(--red)">'+(totalRate>0?totalRate+'%':'—')+'</b></td>'+
     '<td style="font-weight:700;color:'+(totals.gospel>0?(totalChkMatch?'var(--green)':'var(--red)'):'var(--text2)')+'">'+
       (totals.gospel>0?(totalChkMatch?'T':'F'):'—')+
     '</td>';
 
   setText('wb-rate-3',totalRate>0?totalRate+'%':'—');
   setText('wb-sub-3','1주 ~ '+selectedWeek+'주 누적');
-
-  // sticky 열 left 위치 동적 계산
-  requestAnimationFrame(function(){
-    var tbl=document.querySelector('.weekly-acc-tbl');
-    if(!tbl) return;
-    var rows=tbl.querySelectorAll('tr');
-    if(!rows.length) return;
-    var c1=0,c2=0,c3=0;
-    rows[rows.length-1].querySelectorAll('td,th').forEach(function(cell,i){
-      if(i===0) c1=0;
-      if(i===1) c2=cell.offsetWidth;
-      if(i===2) c3=cell.offsetWidth+c2;
-    });
-    tbl.querySelectorAll('th:nth-child(1),td:nth-child(1)').forEach(function(el){el.style.left=c1+'px';});
-    tbl.querySelectorAll('th:nth-child(2),td:nth-child(2)').forEach(function(el){el.style.left=c2+'px';});
-    tbl.querySelectorAll('th:nth-child(3),td:nth-child(3)').forEach(function(el){el.style.left=c3+'px';});
-  });
 }
 
 // ── 설정 모달 ────────────────────────────────────────────────────────────────
 function openSettings(){
   document.getElementById('set-url').value=CFG.url;
   document.getElementById('set-title').value=CFG.title;
+  document.getElementById('set-train-start').value=CFG.trainStart||'';
+  document.getElementById('set-train-end').value=CFG.trainEnd||'';
+  updateTrainPeriodInfo();
   var banEl=document.getElementById('set-ban');
   var grpEl=document.getElementById('set-group');
   if(banEl) banEl.value=localStorage.getItem('suju_ban')||'수지주일반';
@@ -1385,6 +1394,22 @@ function openSettings(){
   buildGroupSettings();
   buildJoAssign();
   document.getElementById('settings-modal').classList.add('show');
+}
+
+function updateTrainPeriodInfo(){
+  var infoEl=document.getElementById('train-period-info');
+  if(!infoEl) return;
+  var s=document.getElementById('set-train-start').value;
+  var e=document.getElementById('set-train-end').value;
+  if(!s){infoEl.textContent='';return;}
+  var start=new Date(s);
+  var startDay=start.getDay();
+  var diffToMon=startDay===0?-6:1-startDay;
+  var monday=new Date(start);
+  monday.setDate(start.getDate()+diffToMon);
+  var weeks=e?Math.ceil((new Date(e)-monday)/(1000*60*60*24*7)):13;
+  var curW=calcCurrentWeek();
+  infoEl.textContent='1주 시작: '+monday.toLocaleDateString('ko-KR')+(e?' / 총 '+weeks+'주':'')+(curW?' / 현재: '+curW+'주차':'');
 }
 
 function closeSettings(){
@@ -1433,6 +1458,8 @@ function cycleJoGroup(el,jo){
 function saveSettings(){
   CFG.url=document.getElementById('set-url').value.trim();
   CFG.title=document.getElementById('set-title').value.trim()||'61기 수주반';
+  CFG.trainStart=document.getElementById('set-train-start').value||'';
+  CFG.trainEnd=document.getElementById('set-train-end').value||'';
   CFG.groups=CFG.groups.map(function(g,i){
     return{id:g.id,name:document.getElementById('grp-name-'+i).value||g.name,
            leader:document.getElementById('grp-leader-'+i).value||g.leader};
@@ -1447,11 +1474,16 @@ function saveSettings(){
   if(grpEl) localStorage.setItem('suju_group', grpEl.value.trim());
   localStorage.setItem('mon_url',CFG.url);
   localStorage.setItem('mon_title',CFG.title);
+  localStorage.setItem('mon_trainStart',CFG.trainStart);
+  localStorage.setItem('mon_trainEnd',CFG.trainEnd);
   localStorage.setItem('mon_groups',JSON.stringify(CFG.groups));
   localStorage.setItem('mon_joGroup',JSON.stringify(CFG.joGroup));
+  // 훈련 시작일 기준 주차 재계산
+  currentWeek=calcCurrentWeek();
+  buildWeekSelect();
   closeSettings();
   updateConnBadge();
-  showToast('✅ 설정이 저장됐습니다.');
+  showToast('✅ 설정이 저장됐습니다. 현재 주차: '+currentWeek+'주');
   if(CFG.url) loadData();
 }
 
