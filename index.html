@@ -377,6 +377,7 @@ pre.code-block{background:#1a1e3a;color:#d4d4d4;padding:11px;border-radius:6px;f
     <input type="hidden" id="leader_step">
     <input type="hidden" id="trainer_step">
     <input type="hidden" id="trainee_step">
+  </div>
   <div class="divider"></div>
   <div class="sec">
     <div class="sec-lbl" style="margin-top:14px;">문서 정보</div>
@@ -459,6 +460,7 @@ pre.code-block{background:#1a1e3a;color:#d4d4d4;padding:11px;border-radius:6px;f
           <option value="지구촌교인">지구촌교인</option>
           <option value="질문지">질문지</option>
           <option value="7일후">7일후</option>
+          <option value="훈련생">훈련생</option>
         </select>
       </div>
     </div>
@@ -1106,7 +1108,6 @@ function doPost(e){
     s.appendRow([
       savedAt,d.week,d.date,d.doc_number,d.evang_type,d.evang_count,
       d.jo,d.leader,d.trainer,d.trainee1,
-      d.leader_step,d.trainer_step,d.trainee_step,
       d.contact,d.gospel,d.target,d.decision,d.reject,d.confirm,d.believer,
       d.location,d.name,d.age,d.marriage,d.gender,
       d.meet_place,d.gospel_place,d.target_type,d.relation_member,
@@ -1177,7 +1178,6 @@ function sendEmailAlert(d,savedAt){
 function writeHeader(s){
   s.appendRow(['저장일시','주차','전도일','문서번호','전도유형','횟수',
     '조','훈련자(조장)','훈련자','훈련생',
-    '훈련자(조장)단계','훈련자단계','훈련생단계',
     '접촉횟수','복음제시','대상자','결신','보류/거절','확신','이미신자',
     '거주지역','성씨','나이','결혼여부','성별','만난장소','복음제시장소',
     '대상자구분','관계조원','종교배경','직업',
@@ -1269,7 +1269,7 @@ const ROLES=['서론','은혜','인간','하나님','그리스도','믿음','결
 const MEMBERS=[{id:'leader',label:'훈련자(조장)',color:'#1a3a9e'},{id:'trainer',label:'훈련자',color:'#2050c8'},{id:'trainee',label:'훈련생',color:'#5c7cbb'}];
 const DIAG_MAP={'있었고_믿음':{diag:'머리신자 / 이미신자',badge:'orange'},'있었고_etc':{diag:'착각비신자',badge:'red'},'없었고_믿음':{diag:'확신부족 / 비신자',badge:'blue-purple'},'없었고_etc':{diag:'비신자',badge:'purple'}};
 let currentMode='server';
-let scriptUrl=localStorage.getItem('apps_script_url')||'https://script.google.com/macros/s/AKfycbymlmP5-hoctVgxT2cweqJNFHoTjYO3ujLT457u3ce3t8uUcjOPYYEg-ClzvsJy4mbj/exec';
+let scriptUrl=localStorage.getItem('apps_script_url')||'https://script.google.com/macros/s/AKfycbxkxK9eVmITyjCMF6NxSOnbKSBBa-fPVw3ivf72wzOLYj0CXAxaGYuJynrwTV6Rm9-m/exec';
 var _lastSavedDiagResult='';
 
 var _autoSaveTimer=null;
