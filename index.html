@@ -374,7 +374,9 @@ pre.code-block{background:#1a1e3a;color:#d4d4d4;padding:11px;border-radius:6px;f
         <input type="text" id="q2_trainee1" placeholder="이름" oninput="syncPreview()" style="width:100%;">
       </div>
     </div>
-  </div>
+    <input type="hidden" id="leader_step">
+    <input type="hidden" id="trainer_step">
+    <input type="hidden" id="trainee_step">
   <div class="divider"></div>
   <div class="sec">
     <div class="sec-lbl" style="margin-top:14px;">문서 정보</div>
@@ -1104,6 +1106,7 @@ function doPost(e){
     s.appendRow([
       savedAt,d.week,d.date,d.doc_number,d.evang_type,d.evang_count,
       d.jo,d.leader,d.trainer,d.trainee1,
+      d.leader_step,d.trainer_step,d.trainee_step,
       d.contact,d.gospel,d.target,d.decision,d.reject,d.confirm,d.believer,
       d.location,d.name,d.age,d.marriage,d.gender,
       d.meet_place,d.gospel_place,d.target_type,d.relation_member,
@@ -1174,6 +1177,7 @@ function sendEmailAlert(d,savedAt){
 function writeHeader(s){
   s.appendRow(['저장일시','주차','전도일','문서번호','전도유형','횟수',
     '조','훈련자(조장)','훈련자','훈련생',
+    '훈련자(조장)단계','훈련자단계','훈련생단계',
     '접촉횟수','복음제시','대상자','결신','보류/거절','확신','이미신자',
     '거주지역','성씨','나이','결혼여부','성별','만난장소','복음제시장소',
     '대상자구분','관계조원','종교배경','직업',
@@ -1265,7 +1269,7 @@ const ROLES=['서론','은혜','인간','하나님','그리스도','믿음','결
 const MEMBERS=[{id:'leader',label:'훈련자(조장)',color:'#1a3a9e'},{id:'trainer',label:'훈련자',color:'#2050c8'},{id:'trainee',label:'훈련생',color:'#5c7cbb'}];
 const DIAG_MAP={'있었고_믿음':{diag:'머리신자 / 이미신자',badge:'orange'},'있었고_etc':{diag:'착각비신자',badge:'red'},'없었고_믿음':{diag:'확신부족 / 비신자',badge:'blue-purple'},'없었고_etc':{diag:'비신자',badge:'purple'}};
 let currentMode='server';
-let scriptUrl=localStorage.getItem('apps_script_url')||'https://script.google.com/macros/s/AKfycbxj1-Ki6u4LIPbmSlOIrEZ7Pn6ZGj6QaMxgk5NUoLY/exec';
+let scriptUrl=localStorage.getItem('apps_script_url')||'https://script.google.com/macros/s/AKfycbymlmP5-hoctVgxT2cweqJNFHoTjYO3ujLT457u3ce3t8uUcjOPYYEg-ClzvsJy4mbj/exec';
 var _lastSavedDiagResult='';
 
 var _autoSaveTimer=null;
@@ -1698,12 +1702,18 @@ function onJoSelect(){
     document.getElementById('q2_leader').value=found.leader||'';
     document.getElementById('q2_trainer').value=found.trainer||'';
     document.getElementById('q2_trainee1').value=found.trainee||'';
+    document.getElementById('leader_step').value=found.leaderStep||'';
+    document.getElementById('trainer_step').value=found.trainerStep||'';
+    document.getElementById('trainee_step').value=found.traineeStep||'';
     // 조 선택 시 group localStorage 저장
     if(found.group) localStorage.setItem('suju_group', found.group);
   }else{
     document.getElementById('q2_leader').value='';
     document.getElementById('q2_trainer').value='';
     document.getElementById('q2_trainee1').value='';
+    document.getElementById('leader_step').value='';
+    document.getElementById('trainer_step').value='';
+    document.getElementById('trainee_step').value='';
   }
   // 관계 드롭다운 갱신
   buildRelationDropdown();
@@ -2203,7 +2213,7 @@ function saveDiagResult(){
 function v(id){var el=document.getElementById(id);return el?el.value:'';}
 function radio(n){var el=document.querySelector('input[name="'+n+'"]:checked');return el?el.value:'';}
 function getNextSeq(){var n=(parseInt(localStorage.getItem(LS_SEQ)||'0')||0)+1;localStorage.setItem(LS_SEQ,n);return n;}
-function collectFormData(){return{week:v('report-week'),date:v('report-date'),doc_number:v('doc_number'),evang_type:v('evang_type'),evang_count:v('evang_count'),jo:v('q1_jo'),leader:v('q2_leader'),trainer:v('q2_trainer'),trainee1:v('q2_trainee1'),contact:v('t_contact'),gospel:v('t_gospel'),target:v('t_target'),decision:v('t_decision'),reject:v('t_reject'),confirm:v('t_confirm'),believer:v('t_believer'),location:v('q3_location'),target_type:v('q3_target_type'),relation_member:v('q3_relation_member'),name:v('q3_name'),age:v('q3_age'),marriage:radio('marriage'),gender:radio('gender'),gospel_place:v('q3_gospel_place'),meet_place:v('q3_meet_place'),religion:getReligionValue(),job:v('q4_job'),heaven:radio('heaven'),reason:radio('reason'),yeopjeop:radio('yeopjeop'),diag_result:v('diag-saved-result'),testimony6:radio('testimony6'),testimony7:radio('testimony7'),leader_part:v('q8_leader_part'),leader_action:radio('leader_action'),trainer_part:v('q8_trainer_part'),trainer_action:radio('trainer_action'),trainee_part:v('q8_trainee_part'),trainee_action:radio('trainee_action'),result:v('q8_result'),immed_nurture:radio('immed_nurture'),followup:radio('followup'),followup_reason:v('followup_reason'),q10:v('q10'),q11:v('q11'),q12:v('q12'),q13:v('q13')};}
+function collectFormData(){return{week:v('report-week'),date:v('report-date'),doc_number:v('doc_number'),evang_type:v('evang_type'),evang_count:v('evang_count'),jo:v('q1_jo'),leader:v('q2_leader'),trainer:v('q2_trainer'),trainee1:v('q2_trainee1'),leader_step:v('leader_step'),trainer_step:v('trainer_step'),trainee_step:v('trainee_step'),contact:v('t_contact'),gospel:v('t_gospel'),target:v('t_target'),decision:v('t_decision'),reject:v('t_reject'),confirm:v('t_confirm'),believer:v('t_believer'),location:v('q3_location'),target_type:v('q3_target_type'),relation_member:v('q3_relation_member'),name:v('q3_name'),age:v('q3_age'),marriage:radio('marriage'),gender:radio('gender'),gospel_place:v('q3_gospel_place'),meet_place:v('q3_meet_place'),religion:getReligionValue(),job:v('q4_job'),heaven:radio('heaven'),reason:radio('reason'),yeopjeop:radio('yeopjeop'),diag_result:v('diag-saved-result'),testimony6:radio('testimony6'),testimony7:radio('testimony7'),leader_part:v('q8_leader_part'),leader_action:radio('leader_action'),trainer_part:v('q8_trainer_part'),trainer_action:radio('trainer_action'),trainee_part:v('q8_trainee_part'),trainee_action:radio('trainee_action'),result:v('q8_result'),immed_nurture:radio('immed_nurture'),followup:radio('followup'),followup_reason:v('followup_reason'),q10:v('q10'),q11:v('q11'),q12:v('q12'),q13:v('q13')};}
 
 async function handleSubmit(){
   if(currentMode==='test'){submitTest();return;}

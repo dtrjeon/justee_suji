@@ -603,7 +603,7 @@ const MEMBERS=[
 
 // ── 설정 ────────────────────────────────────────────────────────────────────
 let CFG={
-  url: localStorage.getItem('mon_url')||'https://script.google.com/macros/s/AKfycbxkxK9eVmITyjCMF6NxSOnbKSBBa-fPVw3ivf72wzOLYj0CXAxaGYuJynrwTV6Rm9-m/exec',
+  url: localStorage.getItem('mon_url')||'https://script.google.com/macros/s/AKfycbymlmP5-hoctVgxT2cweqJNFHoTjYO3ujLT457u3ce3t8uUcjOPYYEg-ClzvsJy4mbj/exec',
   title: localStorage.getItem('mon_title')||'61기 수주반',
   groups: JSON.parse(localStorage.getItem('mon_groups')||'null') || [
     {id:'A',name:'A그룹',leader:''},
@@ -1086,8 +1086,9 @@ function renderTab1(data,w){
   }).join('');
   tb.innerHTML=html||'<tr><td colspan="12" class="empty"><span class="empty-icon">📭</span><p>데이터가 없습니다.</p></td></tr>';
 
-  var totalGospelAll=totals.gospel+totals.contact;
-  var rate=totalGospelAll>0?Math.round((totals.decision/totalGospelAll)*1000)/10:0;
+  var rTotal1=totals.believer+totals.decision+totals.confirm+totals.reject;
+  var rateDenom1=rTotal1-totals.believer-totals.confirm;
+  var rate=rateDenom1>0?Math.round((totals.decision/rateDenom1)*1000)/10:0;
   setText('wb-rate-1',rate>0?rate+'%':'—');
   setText('wb-sub-1','1주 ~ '+w+'주 누적');
   setText('week-label-1','1주~'+w+'주 누적');
@@ -1107,7 +1108,7 @@ function renderTab1(data,w){
 function renderTab2(data,w){
   var tb=document.getElementById('tb-team');
   var html='';
-  var totalDecision=0,totalGospel=0;
+  var totalDecision=0,totalGospel=0,totalBeliever=0,totalConfirm=0,totalReject=0;
 
   CFG.groups.forEach(function(grp){
     var joList=Object.keys(CFG.joGroup).filter(function(j){return CFG.joGroup[j]===grp.id;}).map(Number).sort();
@@ -1121,7 +1122,7 @@ function renderTab2(data,w){
       var joRecs=data.filter(function(r){return String(r.jo)===String(jo);});
       var g=sum(joRecs,'gospel'),d=sum(joRecs,'decision'),b=sum(joRecs,'believer');
       var cf=sum(joRecs,'confirm'),c=sum(joRecs,'contact'),t=sum(joRecs,'target');
-      totalDecision+=d;totalGospel+=g+c;
+      totalDecision+=d;totalGospel+=g+c;totalBeliever+=b;totalConfirm+=cf;totalReject+=sum(joRecs,'reject');
 
       // 팀전도 수료 요건: 관계전도 6회↑, 질문지 2일↑, 7일후 1회↑
       var rel6=c>=6?'<span class="badge b-green">✓'+c+'</span>':'<span class="badge b-gray">'+c+'</span>';
@@ -1146,7 +1147,9 @@ function renderTab2(data,w){
   });
 
   tb.innerHTML=html||'<tr><td colspan="17" class="empty"><span class="empty-icon">📭</span><p>데이터가 없습니다.</p></td></tr>';
-  var rate=totalGospel>0?Math.round((totalDecision/totalGospel)*1000)/10:0;
+  var rTotal2=totalBeliever+totalDecision+totalConfirm+totalReject;
+  var rateDenom2=rTotal2-totalBeliever-totalConfirm;
+  var rate=rateDenom2>0?Math.round((totalDecision/rateDenom2)*1000)/10:0;
   setText('wb-rate-2',rate>0?rate+'%':'—');
   setText('wb-sub-2','1주 ~ '+w+'주 누적');
   setText('week-label-2','1주~'+w+'주 누적');
@@ -1176,7 +1179,9 @@ function renderTab3(selectedWeek){
     var confirm=sum(wData,'confirm');
     var reject=sum(wData,'reject');
     var gospelAll=gospel+rel;
-    var rate=gospelAll>0?Math.round((decision/gospelAll)*1000)/10:0;
+    var rTotal=believer+decision+confirm+reject;
+    var rateDenom=rTotal-believer-confirm;
+    var rate=rateDenom>0?Math.round((decision/rateDenom)*1000)/10:0;
     var isCur=w===selectedWeek;
 
     totals.active+=active;totals.inactive+=inactive;totals.gospel+=gospel;
@@ -1208,7 +1213,9 @@ function renderTab3(selectedWeek){
 
   tb.innerHTML=html;
 
-  var totalRate=totals.gospelFinal>0?Math.round((totals.decision/totals.gospelFinal)*1000)/10:0;
+  var totalRTotal=totals.imisinja+totals.decision+totals.confirm+totals.reject;
+  var totalRateDenom=totalRTotal-totals.imisinja-totals.confirm;
+  var totalRate=totalRateDenom>0?Math.round((totals.decision/totalRateDenom)*1000)/10:0;
   document.getElementById('tf-weekly-acc').innerHTML=
     '<td><b>TOTAL</b></td>'+
     '<td>'+totals.active+'</td><td>'+totals.inactive+'</td>'+
