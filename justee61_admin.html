@@ -247,7 +247,6 @@ tr:last-child td{border-bottom:none;}
       <div id="data-warning-0" style="display:none;background:#e53935;color:#fff;border-radius:6px;padding:4px 12px;font-size:11px;font-weight:700;letter-spacing:.5px;animation:blink .9s step-start infinite;">🚨 데이터 오류</div>
       <div style="color:rgba(255,255,255,0.8);font-size:13px;font-weight:900;letter-spacing:1px;">
         결신율 &nbsp;<span style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:#fff;" id="wb-rate">—</span>
-        &nbsp;<span style="font-size:11px;color:rgba(255,255,255,0.6);">(<span id="s-decision-cnt">0</span>/<span id="s-rate-denom">0</span>명)</span>
       </div>
     </div>
   </div>
@@ -705,7 +704,9 @@ function calcCurrentWeek(){
   now.setHours(0,0,0,0);
 
   var diff=Math.floor((now-monday)/(1000*60*60*24*7))+1;
-  return Math.min(Math.max(diff,1),13);
+  var week=Math.min(Math.max(diff,1),13);
+  // 전주 반환 (최소 1주)
+  return Math.max(week-1,1);
 }
 let currentTab=0, currentWeek=calcCurrentWeek();
 let allData=[];   // 구글시트에서 불러온 전체 레코드
@@ -1677,9 +1678,9 @@ async function syncJoFromServer(){
       var newMembers=[];
       json.joData.forEach(function(j){
         var grp=CFG.joGroup[j.jo]||'A';
-        if(j.leader) newMembers.push({jo:Number(j.jo),name:j.leader,role:'리더',step:'',group:grp});
-        if(j.trainer) newMembers.push({jo:Number(j.jo),name:j.trainer,role:'훈련자',step:'',group:grp});
-        if(j.trainee) newMembers.push({jo:Number(j.jo),name:j.trainee,role:'훈련생',step:'',group:grp});
+        if(j.leader) newMembers.push({jo:Number(j.jo),name:j.leader,role:'리더',step:j.leaderStep||'',group:grp});
+        if(j.trainer) newMembers.push({jo:Number(j.jo),name:j.trainer,role:'훈련자',step:j.trainerStep||'',group:grp});
+        if(j.trainee) newMembers.push({jo:Number(j.jo),name:j.trainee,role:'훈련생',step:j.traineeStep||'',group:grp});
       });
       MEMBERS.length=0;
       newMembers.forEach(function(m){MEMBERS.push(m);});
