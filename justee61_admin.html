@@ -72,6 +72,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 /* TABLE */
 .tbl-wrap{background:var(--card);border-radius:10px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px;}
+.tbl-wrap-sticky{overflow:visible !important;}
 .tbl-wrap table{height:100%;}
 .tbl-wrap tr[style*="background:#f0f4ff"] td{height:26px !important;font-weight:700;border-top:1.5px solid rgba(32,80,200,0.2)!important;}
 /* 4개 집계 테이블 tfoot 항상 바닥 고정 */
@@ -83,6 +84,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .tbl-head-title{font-size:11px;font-weight:700;color:var(--primary);letter-spacing:.5px;}
 .tbl-head-sub{font-size:10px;color:var(--text3);}
 .tbl-scroll{overflow-x:auto;}
+.tbl-wrap-sticky .tbl-scroll{overflow-x:auto;overflow-y:visible;}
 /* 주차별 현황 테이블 — 1~3열 좌측 고정 */
 .weekly-acc-tbl th:nth-child(1),
 .weekly-acc-tbl td:nth-child(1){position:sticky;left:0;z-index:3;background:#f0f4ff;}
@@ -507,7 +509,7 @@ tr:last-child td{border-bottom:none;}
   </div>
 
   <div class="sec-title">주차별 복음제시 누적 현황</div>
-  <div class="tbl-wrap">
+  <div class="tbl-wrap tbl-wrap-sticky">
     <div class="tbl-head">
       <span class="tbl-head-title">주차별 현황 테이블 <span style="font-size:10px;font-weight:400;color:rgba(40,50,90,0.5);">(노란색 = 선택 주차)</span></span>
       <span style="font-size:10px;color:rgba(40,50,90,0.45);margin-left:auto;">※ 접촉횟수는 결신율 미포함</span>
