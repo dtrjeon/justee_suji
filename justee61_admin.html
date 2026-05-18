@@ -711,7 +711,7 @@ async function loadData(){
   if(!CFG.url){showToast('⚙️ 설정에서 구글 시트 URL을 입력하세요.','warn');return;}
   showToast('⏳ 데이터 불러오는 중...');
   try{
-    var res=await fetch(CFG.url+'?action=get');
+    var res=await fetch(CFG.url+'?action=get',{method:'GET',mode:'cors'});
     var json=await res.json();
     if(json.status!=='ok') throw new Error(json.message||'오류');
     allData=parseRecords(json.records||[]);
@@ -1316,7 +1316,7 @@ async function saveEmailsToServer(){
   if(!emails){showToast('⚠️ 이메일을 입력하세요.');return;}
   status.textContent='⏳ 저장 중...';
   try{
-    var res=await fetch(CFG.url,{method:'POST',body:JSON.stringify({action:'save_email',emails:emails})});
+    var res=await fetch(CFG.url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'save_email',emails:emails})});
     var json=await res.json();
     if(json.status==='ok'){
       localStorage.setItem('mon_emails',emails);
@@ -1335,7 +1335,7 @@ async function loadEmailsFromServer(){
   if(!CFG.url){showToast('⚠️ 구글 시트 URL을 먼저 설정하세요.');return;}
   status.textContent='⏳ 불러오는 중...';
   try{
-    var res=await fetch(CFG.url+'?action=get_email');
+    var res=await fetch(CFG.url+'?action=get_email',{method:'GET',mode:'cors'});
     var json=await res.json();
     if(json.status==='ok'&&json.emails){
       document.getElementById('set-emails').value=json.emails;
@@ -1491,7 +1491,7 @@ async function syncJoFromServer(){
   if(!CFG.url){showToast('⚠️ 구글 시트 URL을 먼저 설정하세요.');return;}
   showToast('⏳ 서버에서 조정보 불러오는 중...');
   try{
-    var res=await fetch(CFG.url+'?action=get_jo');
+    var res=await fetch(CFG.url+'?action=get_jo',{method:'GET',mode:'cors'});
     var json=await res.json();
     if(json.status==='ok'&&json.joData&&json.joData.length){
       // MEMBERS 배열 재구성 (조별 리더/훈련자/훈련생)
@@ -1530,7 +1530,7 @@ async function syncJoToServer(){
   var joArray=Object.values(joMap).sort(function(a,b){return Number(a.jo)-Number(b.jo);});
   joArray.forEach(function(j){j.ban=ban;});
   try{
-    var res=await fetch(CFG.url,{method:'POST',body:JSON.stringify({action:'save_jo',joData:joArray})});
+    var res=await fetch(CFG.url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'save_jo',joData:joArray})});
     var json=await res.json();
     if(json.status==='ok') showToast('✅ 조정보 서버 동기화 완료');
     else showToast('❌ 서버 저장 실패: '+json.message);
