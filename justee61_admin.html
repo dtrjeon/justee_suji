@@ -504,7 +504,7 @@ tr:last-child td{border-bottom:none;}
           <tr>
             <th style="border-right:none;">실시</th><th style="border-right:2px solid rgba(26,58,176,0.45);">미실시</th>
             <th>관계(팀)</th><th>질문지(팀)</th><th>7일후(팀)</th><th>개인</th><th>관계</th><th>QQ</th><th style="border-right:2px solid rgba(26,58,176,0.45);">합계</th>
-            <th>지인/가족</th><th>가족</th><th>지구촌교인</th><th>질문지</th><th>7일후</th><th>훈련생</th><th style="border-right:2px solid rgba(26,58,176,0.45);">합계</th>
+            <th>지인/지인가족</th><th>가족</th><th>지구촌교인</th><th>질문지</th><th>7일후</th><th>훈련생</th><th style="border-right:2px solid rgba(26,58,176,0.45);">합계</th>
             <th>복음제시</th><th>결신</th><th>보류/거절</th><th>확신</th><th style="border-right:2px solid rgba(26,58,176,0.45);">이미신자</th>
             <th>접촉횟수</th>
           </tr>
@@ -1224,6 +1224,15 @@ function renderTab3(selectedWeek){
     var rate=rateDenom>0?Math.round((decision/rateDenom)*1000)/10:0;
     var isCur=w===selectedWeek;
 
+    // 대상자구분 집계
+    var tgtJiin  =wData.filter(function(r){return r.targetType==='지인/지인가족';}).length;
+    var tgtFamily=wData.filter(function(r){return r.targetType==='가족';}).length;
+    var tgtChurch=wData.filter(function(r){return r.targetType==='지구촌교인';}).length;
+    var tgtQues  =wData.filter(function(r){return r.targetType==='질문지';}).length;
+    var tgt7day  =wData.filter(function(r){return r.targetType==='7일후';}).length;
+    var tgtTrain =wData.filter(function(r){return r.targetType==='훈련생';}).length;
+    var tgtAll   =tgtJiin+tgtFamily+tgtChurch+tgtQues+tgt7day+tgtTrain;
+
     // TOTAL: 1주 ~ 선택주차까지만 누적
     if(w<=selectedWeek){
       totals.active+=active;totals.inactive+=inactive;totals.gospel+=gospel;
@@ -1237,6 +1246,13 @@ function renderTab3(selectedWeek){
       totals.evangRel2 =(totals.evangRel2 ||0)+evangRel2;
       totals.evangQQ   =(totals.evangQQ   ||0)+evangQQ;
       totals.evangAll  =(totals.evangAll  ||0)+evangAll;
+      totals.tgtJiin   =(totals.tgtJiin   ||0)+tgtJiin;
+      totals.tgtFamily =(totals.tgtFamily ||0)+tgtFamily;
+      totals.tgtChurch =(totals.tgtChurch ||0)+tgtChurch;
+      totals.tgtQues   =(totals.tgtQues   ||0)+tgtQues;
+      totals.tgt7day   =(totals.tgt7day   ||0)+tgt7day;
+      totals.tgtTrain  =(totals.tgtTrain  ||0)+tgtTrain;
+      totals.tgtAll    =(totals.tgtAll    ||0)+tgtAll;
     }
 
     // 비교: gospel(복음제시) = 결신+보류/거절+확신+이미신자 검증
@@ -1255,8 +1271,14 @@ function renderTab3(selectedWeek){
       '<td>'+(evangRel2||'—')+'</td>'+
       '<td>'+(evangQQ  ||'—')+'</td>'+
       '<td>'+(evangAll ||'—')+'</td>'+
-      // 대상자구분 (미집계) + 합계
-      '<td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>'+
+      // 대상자구분
+      '<td>'+(tgtJiin  ||'—')+'</td>'+
+      '<td>'+(tgtFamily||'—')+'</td>'+
+      '<td>'+(tgtChurch||'—')+'</td>'+
+      '<td>'+(tgtQues  ||'—')+'</td>'+
+      '<td>'+(tgt7day  ||'—')+'</td>'+
+      '<td>'+(tgtTrain ||'—')+'</td>'+
+      '<td>'+(tgtAll   ||'—')+'</td>'+
       // 결과
       '<td>'+(gospel||'—')+'</td>'+
       '<td>'+(decision?'<b style="color:var(--red)">'+decision+'</b>':'—')+'</td>'+
@@ -1287,7 +1309,13 @@ function renderTab3(selectedWeek){
     '<td>'+(totals.evangRel2||0)+'</td>'+
     '<td>'+(totals.evangQQ||0)+'</td>'+
     '<td>'+(totals.evangAll||0)+'</td>'+
-    '<td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>'+
+    '<td>'+(totals.tgtJiin  ||0)+'</td>'+
+    '<td>'+(totals.tgtFamily||0)+'</td>'+
+    '<td>'+(totals.tgtChurch||0)+'</td>'+
+    '<td>'+(totals.tgtQues  ||0)+'</td>'+
+    '<td>'+(totals.tgt7day  ||0)+'</td>'+
+    '<td>'+(totals.tgtTrain ||0)+'</td>'+
+    '<td>'+(totals.tgtAll   ||0)+'</td>'+
     '<td>'+totals.gospel+'</td>'+
     '<td><b style="color:var(--red)">'+totals.decision+'</b></td>'+
     '<td>'+totals.reject+'</td>'+
