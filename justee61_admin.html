@@ -83,7 +83,24 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .tbl-head-title{font-size:11px;font-weight:700;color:var(--primary);letter-spacing:.5px;}
 .tbl-head-sub{font-size:10px;color:var(--text3);}
 .tbl-scroll{overflow-x:auto;}
-/* 조별 상세 현황 선 스타일 */
+/* 복음제시현황 주차별 테이블 — 모든 선 보통 두께 */
+.weekly-acc-tbl th,
+.weekly-acc-tbl td{border:1px solid rgba(26,58,176,0.15);}
+.weekly-acc-tbl th:last-child,
+.weekly-acc-tbl td:last-child{border-right:1px solid rgba(26,58,176,0.15);}
+/* 헤더 아래선 두껍게 */
+.weekly-acc-tbl thead tr:last-child th{border-bottom:2px solid rgba(26,58,176,0.5);}
+/* total 행 위선 두껍게 */
+.weekly-acc-tbl tfoot tr.total-row td{border-top:2px solid rgba(26,58,176,0.5);}
+/* 그룹 경계 구분선: 미실시|관계(팀)(3), 합계|지인/가족(9), 합계|이미신자(16), 복음제시|결신율(22) */
+.weekly-acc-tbl th:nth-child(3),
+.weekly-acc-tbl td:nth-child(3),
+.weekly-acc-tbl th:nth-child(9),
+.weekly-acc-tbl td:nth-child(9),
+.weekly-acc-tbl th:nth-child(16),
+.weekly-acc-tbl td:nth-child(16),
+.weekly-acc-tbl th:nth-child(22),
+.weekly-acc-tbl td:nth-child(22){border-right:2px solid rgba(26,58,176,0.45);}
 .tbl-scroll table td{border-right:1px solid rgba(32,80,200,0.15);border-bottom:1px solid rgba(32,80,200,0.15);}
 .tbl-scroll table td:last-child{border-right:none;}
 .tbl-scroll table tr.jo-row-first td{border-top:2px solid rgba(32,80,200,0.35);}
@@ -470,13 +487,13 @@ tr:last-child td{border-bottom:none;}
       <span class="tbl-head-sub">노란색 = 선택 주차</span>
     </div>
     <div class="tbl-scroll">
-      <table>
+      <table class="weekly-acc-tbl">
         <thead>
           <tr>
             <th>주차</th><th>실시</th><th>미실시</th>
             <th>관계(팀)</th><th>질문지(팀)</th><th>7일후(팀)</th><th>개인</th><th>관계</th><th>합계</th>
             <th>지인/가족</th><th>가족</th><th>지구촌교인</th><th>질문지</th><th>7일후</th><th>훈련생</th><th>합계</th>
-            <th>이미신자</th><th>결신</th><th>확신부족</th><th>보류</th><th>거절</th><th>복음제시</th><th>결신율</th>
+            <th>복음제시</th><th>결신</th><th>보류</th><th>거절</th><th>확신부족</th><th>이미신자</th><th>결신율</th>
           </tr>
         </thead>
         <tbody id="tb-weekly-acc"></tbody>
@@ -1201,12 +1218,12 @@ function renderTab3(selectedWeek){
       '<td>'+(gospelAll||'—')+'</td>'+
       '<td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>'+
       '<td>'+(gospelAll||'—')+'</td>'+
-      '<td>'+(believer||'—')+'</td>'+
+      '<td>'+(gospelAll||'—')+'</td>'+
       '<td>'+(decision?'<b style="color:var(--red)">'+decision+'</b>':'—')+'</td>'+
-      '<td>'+(confirm||'—')+'</td>'+
       '<td>'+(reject||'—')+'</td>'+
       '<td>—</td>'+
-      '<td>'+(gospelAll||'—')+'</td>'+
+      '<td>'+(confirm||'—')+'</td>'+
+      '<td>'+(believer||'—')+'</td>'+
       '<td>'+(rate>0?'<b style="color:var(--red)">'+rate+'%</b>':'—')+'</td>'+
       '</tr>';
   }
@@ -1223,10 +1240,11 @@ function renderTab3(selectedWeek){
     '<td>'+totals.rel+'</td><td>'+totals.gospelFinal+'</td>'+
     '<td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>'+
     '<td>'+totals.gospelFinal+'</td>'+
-    '<td>'+totals.imisinja+'</td>'+
-    '<td><b style="color:var(--red)">'+totals.decision+'</b></td>'+
-    '<td>'+totals.confirm+'</td><td>'+totals.reject+'</td><td>—</td>'+
     '<td>'+totals.gospelFinal+'</td>'+
+    '<td><b style="color:var(--red)">'+totals.decision+'</b></td>'+
+    '<td>'+totals.reject+'</td><td>—</td>'+
+    '<td>'+totals.confirm+'</td>'+
+    '<td>'+totals.imisinja+'</td>'+
     '<td><b style="color:var(--red)">'+(totalRate>0?totalRate+'%':'—')+'</b></td>';
 
   setText('wb-rate-3',totalRate>0?totalRate+'%':'—');
