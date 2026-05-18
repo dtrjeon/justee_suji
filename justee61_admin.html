@@ -83,21 +83,22 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .tbl-head-title{font-size:11px;font-weight:700;color:var(--primary);letter-spacing:.5px;}
 .tbl-head-sub{font-size:10px;color:var(--text3);}
 .tbl-scroll{overflow-x:auto;}
-/* 복음제시현황 주차별 테이블 — 기본 1px (전역 규칙 차단 포함) */
+/* 복음제시현황 주차별 테이블 — border-collapse 방식 */
+.weekly-acc-tbl{border-collapse:collapse;border-top:1px solid #c5cde8;border-left:1px solid #c5cde8;}
 .weekly-acc-tbl th,
-.weekly-acc-tbl td,
+.weekly-acc-tbl td{border-right:1px solid #c5cde8;border-bottom:1px solid #c5cde8;font-size:10px;}
 .tbl-scroll table.weekly-acc-tbl th,
-.tbl-scroll table.weekly-acc-tbl td{border:1px solid rgba(26,58,176,0.3) !important;}
-.weekly-acc-tbl thead th,
-.tbl-scroll table.weekly-acc-tbl thead th{border-bottom:1px solid rgba(26,58,176,0.3) !important;}
+.tbl-scroll table.weekly-acc-tbl td{border-right:1px solid #c5cde8 !important;border-bottom:1px solid #c5cde8 !important;border-left:none !important;border-top:none !important;font-size:10px !important;}
+/* weekly-acc-tbl 전역 th border-bottom 덮어쓰기 */
+.tbl-scroll table.weekly-acc-tbl thead th{border-bottom:1px solid #c5cde8 !important;}
 /* weekly-acc-tbl 1행(그룹명) 높이 축소 */
 .weekly-acc-tbl thead tr:first-child th{padding:4px 6px;font-size:10px;letter-spacing:.5px;}
 /* 2행(마지막 헤더행) 아랫선 2px */
-.weekly-acc-tbl thead tr:last-child th{border-bottom:2px solid rgba(26,58,176,0.6) !important;}
-.weekly-acc-tbl thead tr:first-child th[rowspan="2"]{border-bottom:2px solid rgba(26,58,176,0.6) !important;}
-/* 마지막 행(TOTAL) 윗선 2px */
-.weekly-acc-tbl tfoot tr.total-row td{border-top:2px solid rgba(26,58,176,0.6) !important;}
-/* 그룹 경계 열 우측선 2px: 미실시(3), 복음제시합계(10), 대상자합계(17), 이미신자(22) */
+.tbl-scroll table.weekly-acc-tbl thead tr:last-child th{border-bottom:2px solid #8fa3d0 !important;}
+.tbl-scroll table.weekly-acc-tbl thead tr:first-child th[rowspan="2"]{border-bottom:2px solid #8fa3d0 !important;}
+/* TOTAL행 윗선 — 바로 위 tbody 마지막 행 border-bottom으로 처리 */
+.tbl-scroll table.weekly-acc-tbl tbody tr:last-child td{border-bottom:2px solid #8fa3d0 !important;}
+/* 그룹 경계 열 우측선 2px */
 .tbl-scroll table.weekly-acc-tbl th:nth-child(3),
 .tbl-scroll table.weekly-acc-tbl td:nth-child(3),
 .tbl-scroll table.weekly-acc-tbl th:nth-child(10),
@@ -105,10 +106,12 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .tbl-scroll table.weekly-acc-tbl th:nth-child(17),
 .tbl-scroll table.weekly-acc-tbl td:nth-child(17),
 .tbl-scroll table.weekly-acc-tbl th:nth-child(22),
-.tbl-scroll table.weekly-acc-tbl td:nth-child(22){border-right:2px solid rgba(26,58,176,0.6) !important;}
-/* 결신율(24번) 좌우 2px */
+.tbl-scroll table.weekly-acc-tbl td:nth-child(22){border-right:2px solid #8fa3d0 !important;}
+/* 결신율 좌측(23번 우측) 우측(24번 우측) 2px */
+.tbl-scroll table.weekly-acc-tbl th:nth-child(23),
+.tbl-scroll table.weekly-acc-tbl td:nth-child(23){border-right:2px solid #8fa3d0 !important;}
 .tbl-scroll table.weekly-acc-tbl th:nth-child(24),
-.tbl-scroll table.weekly-acc-tbl td:nth-child(24){border-left:2px solid rgba(26,58,176,0.6) !important;border-right:2px solid rgba(26,58,176,0.6) !important;}
+.tbl-scroll table.weekly-acc-tbl td:nth-child(24){border-right:2px solid #8fa3d0 !important;}
 /* tbl-scroll 전역 규칙 (조별상세현황용) */
 .tbl-scroll table td:last-child{border-right:none;}
 .tbl-scroll table tr.jo-row-first td{border-top:2px solid rgba(32,80,200,0.35);}
