@@ -92,19 +92,16 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .weekly-acc-tbl thead tr:last-child th{border-bottom:2px solid rgba(26,58,176,0.5);}
 /* total 행 위선 두껍게 */
 .weekly-acc-tbl tfoot tr.total-row td{border-top:2px solid rgba(26,58,176,0.5);}
-/* 그룹 경계 구분선: 미실시|관계(팀)(3), 합계|지인/가족(9), 합계|복음제시(16), 이미신자|결신율(22) */
+/* 그룹 경계 구분선: 미실시|관계(팀)(3), 합계|지인/가족(9), 합계|복음제시(16), 이미신자|비교(21) */
 .weekly-acc-tbl th:nth-child(3),
 .weekly-acc-tbl td:nth-child(3),
 .weekly-acc-tbl th:nth-child(9),
 .weekly-acc-tbl td:nth-child(9),
 .weekly-acc-tbl th:nth-child(16),
 .weekly-acc-tbl td:nth-child(16),
-.weekly-acc-tbl th:nth-child(22),
-.weekly-acc-tbl td:nth-child(22){border-right:2px solid rgba(26,58,176,0.45);}
+.weekly-acc-tbl th:nth-child(21),
+.weekly-acc-tbl td:nth-child(21){border-right:2px solid rgba(26,58,176,0.45);}
 /* tbl-scroll 전역 규칙 덮어쓰기 — 보류(19)열 일반 두께 */
-.weekly-acc-tbl th:nth-child(19),
-.weekly-acc-tbl td:nth-child(19){border-right:1px solid rgba(26,58,176,0.15);}
-.tbl-scroll table td{border-right:1px solid rgba(32,80,200,0.15);border-bottom:1px solid rgba(32,80,200,0.15);}
 .tbl-scroll table td:last-child{border-right:none;}
 .tbl-scroll table tr.jo-row-first td{border-top:2px solid rgba(32,80,200,0.35);}
 .tbl-scroll table tr.group-row td{border-top:3px solid rgba(32,80,200,0.6);border-bottom:3px solid rgba(32,80,200,0.6);}
@@ -112,6 +109,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 /* 결과(19열)↔참관, 즉석양육(28열)↔후속양육 구분선 */
 .tbl-scroll table td:nth-child(19){border-right:2px solid rgba(32,80,200,0.45);}
 .tbl-scroll table td:nth-child(28){border-right:2px solid rgba(32,80,200,0.45);}
+/* weekly-acc-tbl: tbl-scroll 전역 규칙(19번 굵은선) 덮어쓰기 */
+.weekly-acc-tbl th:nth-child(19),
+.weekly-acc-tbl td:nth-child(19){border-right:1px solid rgba(26,58,176,0.15);}
 /* 2행 헤더 - 1행(그룹명) 높이 축소 */
 .tbl-scroll table thead tr:first-child th{padding:4px 6px;font-size:10px;letter-spacing:.5px;}
 table{width:100%;border-collapse:collapse;font-size:11px;}
@@ -496,7 +496,7 @@ tr:last-child td{border-bottom:none;}
             <th>주차</th><th>실시</th><th>미실시</th>
             <th>관계(팀)</th><th>질문지(팀)</th><th>7일후(팀)</th><th>개인</th><th>관계</th><th>합계</th>
             <th>지인/가족</th><th>가족</th><th>지구촌교인</th><th>질문지</th><th>7일후</th><th>훈련생</th><th>합계</th>
-            <th>복음제시</th><th>결신</th><th>보류</th><th>거절</th><th>확신부족</th><th>이미신자</th><th>비교</th><th>결신율</th>
+            <th>복음제시</th><th>결신</th><th>보류/거절</th><th>확신</th><th>이미신자</th><th>비교</th><th>결신율</th>
           </tr>
         </thead>
         <tbody id="tb-weekly-acc"></tbody>
@@ -1191,6 +1191,15 @@ function renderTab3(selectedWeek){
     var wData=allData.filter(function(r){return r.week===w;});
     var active=new Set(wData.map(function(r){return r.jo;})).size;
     var inactive=totalJoCount-active;
+
+    // ① 전도유형별 집계
+    var evangRel  =wData.filter(function(r){return r.evangType==='관계(팀)';}).length;
+    var evangQues =wData.filter(function(r){return r.evangType==='질문지(팀)';}).length;
+    var evang7day =wData.filter(function(r){return r.evangType==='7일후(팀)';}).length;
+    var evangPer  =wData.filter(function(r){return r.evangType==='개인';}).length;
+    var evangRel2 =wData.filter(function(r){return r.evangType==='관계';}).length;
+    var evangAll  =evangRel+evangQues+evang7day+evangPer+evangRel2;
+
     var gospel=sum(wData,'gospel');
     var rel=sum(wData,'contact');
     var ques=sum(wData,'target');
@@ -1210,28 +1219,40 @@ function renderTab3(selectedWeek){
       totals.rel+=rel;totals.ques+=ques;totals.decision+=decision;
       totals.imisinja+=believer;totals.confirm+=confirm;totals.reject+=reject;
       totals.gospelFinal+=gospelAll;
+      totals.evangRel  =(totals.evangRel  ||0)+evangRel;
+      totals.evangQues =(totals.evangQues ||0)+evangQues;
+      totals.evang7day =(totals.evang7day ||0)+evang7day;
+      totals.evangPer  =(totals.evangPer  ||0)+evangPer;
+      totals.evangRel2 =(totals.evangRel2 ||0)+evangRel2;
+      totals.evangAll  =(totals.evangAll  ||0)+evangAll;
     }
+
+    // ② 비교: 복음제시 = 결신+보류/거절+확신+이미신자
+    var chkSum=decision+reject+confirm+believer;
+    var chkMatch=gospelAll>0&&gospelAll===chkSum;
 
     html+='<tr'+(isCur?' class="week-acc-row-cur"':'')+'>'+
       '<td><b>'+w+'주</b></td>'+
       '<td>'+(active||'—')+'</td>'+
       '<td>'+(inactive||'—')+'</td>'+
-      '<td>'+(gospel||'—')+'</td>'+
-      '<td>'+(ques||'—')+'</td>'+
-      '<td>—</td>'+
-      '<td>—</td>'+
-      '<td>'+(rel||'—')+'</td>'+
-      '<td>'+(gospelAll||'—')+'</td>'+
+      // 전도유형별
+      '<td>'+(evangRel ||'—')+'</td>'+
+      '<td>'+(evangQues||'—')+'</td>'+
+      '<td>'+(evang7day||'—')+'</td>'+
+      '<td>'+(evangPer ||'—')+'</td>'+
+      '<td>'+(evangRel2||'—')+'</td>'+
+      '<td>'+(evangAll ||'—')+'</td>'+
+      // 대상자구분 (미집계)
       '<td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>'+
       '<td>'+(gospelAll||'—')+'</td>'+
+      // 결과
       '<td>'+(gospelAll||'—')+'</td>'+
       '<td>'+(decision?'<b style="color:var(--red)">'+decision+'</b>':'—')+'</td>'+
       '<td>'+(reject||'—')+'</td>'+
-      '<td>—</td>'+
       '<td>'+(confirm||'—')+'</td>'+
       '<td>'+(believer||'—')+'</td>'+
-      '<td style="font-weight:700;color:'+(gospelAll>0&&gospelAll===(decision+reject+confirm+believer)?'var(--green)':'var(--red)')+'">'+
-        (gospelAll>0?(gospelAll===(decision+reject+confirm+believer)?'T':'F'):'—')+
+      '<td style="font-weight:700;color:'+(chkMatch?'var(--green)':'var(--red)')+'">'+
+        (gospelAll>0?(chkMatch?'T':'F'):'—')+
       '</td>'+
       '<td>'+(rate>0?'<b style="color:var(--red)">'+rate+'%</b>':'—')+'</td>'+
       '</tr>';
@@ -1242,20 +1263,26 @@ function renderTab3(selectedWeek){
   var totalRTotal=totals.imisinja+totals.decision+totals.confirm+totals.reject;
   var totalRateDenom=totalRTotal-totals.imisinja-totals.confirm;
   var totalRate=totalRateDenom>0?Math.round((totals.decision/totalRateDenom)*1000)/10:0;
+  var totalChkSum=totals.decision+totals.reject+totals.confirm+totals.imisinja;
+  var totalChkMatch=totals.gospelFinal>0&&totals.gospelFinal===totalChkSum;
   document.getElementById('tf-weekly-acc').innerHTML=
     '<td><b>1~'+selectedWeek+'주<br>TOTAL</b></td>'+
     '<td>'+totals.active+'</td><td>'+totals.inactive+'</td>'+
-    '<td>'+totals.gospel+'</td><td>'+totals.ques+'</td><td>—</td><td>—</td>'+
-    '<td>'+totals.rel+'</td><td>'+totals.gospelFinal+'</td>'+
+    '<td>'+(totals.evangRel||0)+'</td>'+
+    '<td>'+(totals.evangQues||0)+'</td>'+
+    '<td>'+(totals.evang7day||0)+'</td>'+
+    '<td>'+(totals.evangPer||0)+'</td>'+
+    '<td>'+(totals.evangRel2||0)+'</td>'+
+    '<td>'+(totals.evangAll||0)+'</td>'+
     '<td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>'+
     '<td>'+totals.gospelFinal+'</td>'+
     '<td>'+totals.gospelFinal+'</td>'+
     '<td><b style="color:var(--red)">'+totals.decision+'</b></td>'+
-    '<td>'+totals.reject+'</td><td>—</td>'+
+    '<td>'+totals.reject+'</td>'+
     '<td>'+totals.confirm+'</td>'+
     '<td>'+totals.imisinja+'</td>'+
-    '<td style="font-weight:700;color:'+(totals.gospelFinal>0&&totals.gospelFinal===(totals.decision+totals.reject+totals.confirm+totals.imisinja)?'var(--green)':'var(--red)')+'">'+
-      (totals.gospelFinal>0?(totals.gospelFinal===(totals.decision+totals.reject+totals.confirm+totals.imisinja)?'T':'F'):'—')+
+    '<td style="font-weight:700;color:'+(totalChkMatch?'var(--green)':'var(--red)')+'">'+
+      (totals.gospelFinal>0?(totalChkMatch?'T':'F'):'—')+
     '</td>'+
     '<td><b style="color:var(--red)">'+(totalRate>0?totalRate+'%':'—')+'</b></td>';
 
