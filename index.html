@@ -1536,7 +1536,24 @@ const DEFAULT_JO=[
   {jo:'10',leader:'정은진', leaderStep:'4', trainer:'이선영', trainerStep:'2', trainee:'김정옥', traineeStep:'1', group:'D', ban:'수지주일반'},
   {jo:'11',leader:'김윤희', leaderStep:'3', trainer:'박희철', trainerStep:'2', trainee:'최정화', traineeStep:'1', group:'D', ban:'수지주일반'}
 ];
-function getJoData(){try{var d=JSON.parse(localStorage.getItem(LS_JO));return(d&&d.length)?d:DEFAULT_JO;}catch{return DEFAULT_JO;}}
+function getJoData(){
+  try{
+    var d=JSON.parse(localStorage.getItem(LS_JO));
+    if(!d||!d.length) return DEFAULT_JO;
+    // 단계 정보 없는 경우 DEFAULT_JO에서 보완
+    return d.map(function(j){
+      if(!j.leaderStep&&!j.trainerStep&&!j.traineeStep){
+        var def=DEFAULT_JO.find(function(dj){return String(dj.jo)===String(j.jo);});
+        if(def){
+          j.leaderStep=def.leaderStep||'';
+          j.trainerStep=def.trainerStep||'';
+          j.traineeStep=def.traineeStep||'';
+        }
+      }
+      return j;
+    });
+  }catch{return DEFAULT_JO;}
+}
 function saveJoDataLS(arr){localStorage.setItem(LS_JO,JSON.stringify(arr));}
 function buildJoDropdown(){var sel=document.getElementById('q1_jo');var cur=sel.value;sel.innerHTML='<option value="">조 선택</option>';getJoData().forEach(function(j){var opt=document.createElement('option');opt.value=j.jo;opt.textContent=j.jo+'조';sel.appendChild(opt);});if(cur)sel.value=cur;}
 const LS_RELIGION='report_religion_list';
