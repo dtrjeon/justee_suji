@@ -859,10 +859,10 @@ function parseRecords(raw){
       immedNurture:g('즉석양육'),
       followup: g('후속양육'),
       followupReason:g('하지못한사유'),
-      q10:      g('느낀점(10)'),
-      q11:      g('문제점(11)'),
-      q12:      g('기도제목(12)'),
-      q13:      g('기타(13)')
+      q10:      g('느낀점(10)')||g('느낀점(10번)'),
+      q11:      g('문제점(11)')||g('문제점(11번)'),
+      q12:      g('기도제목(12)')||g('기도제목(12번)'),
+      q13:      g('기타(13)')||g('기타(13번)')
     };
   });
 }
@@ -1035,12 +1035,17 @@ function renderTab0(data,w){
       var roleCls=m.role==='리더'?'color:#111111;font-weight:700;':m.role==='훈련자'?'color:#1565c0;':'color:#666;';
       var roleBadge=m.role==='리더'?'<span class="badge b-blue">조장</span>':m.role==='훈련자'?'<span class="badge b-green">훈련자</span>':'<span class="badge b-gray">훈련생</span>';
 
-      var recStep = rec ? (
-        m.role==='리더'   ? (rec.leaderStep  || '') :
-        m.role==='훈련자' ? (rec.trainerStep || '') :
-                            (rec.traineeStep || '')
-      ) : '';
-      var displayStep = recStep || m.step || '—';
+      // 서버 단계: 이번 주 레코드 우선, 없으면 allData 전체에서 해당 조 최신 레코드 참조
+      var stepRec=rec||(function(){
+        var fb=allData.filter(function(r){return String(r.jo)===String(jo);});
+        return fb.length?fb[fb.length-1]:null;
+      })();
+      var recStep=stepRec?(
+        m.role==='리더'  ?(stepRec.leaderStep ||''):
+        m.role==='훈련자'?(stepRec.trainerStep||''):
+                          (stepRec.traineeStep||'')
+      ):'';
+      var displayStep=recStep||m.step||'—';
 
       html+='<tr class="'+(noData?'jo-row inactive-row':'jo-row active-row')+(mi===0?' jo-row-first':'')+'" style="'+(noData?'background:#fafafa;':'')+'">'+
         (mi===0?'<td class="td-jo" rowspan="'+rowspan+'" style="'+(noData?'color:#e65100;':'')+'">'+(noData?'<span title="미실시">':'')+jo+(noData?'</span>':'')+'</td>':'') +
@@ -1157,10 +1162,21 @@ function renderTab1(data,w){
     totals.decision+=d;totals.believer+=b;totals.confirm+=cf;totals.reject+=rj;totals.week7+=w7;
     var roleCls=m.role==='리더'?'b-blue':m.role==='훈련자'?'b-orange':'b-gray';
     var tdTop=isFirstOfJo?'border-top:2px solid #8fa3d0;':'';
+    // 서버 단계: 해당 조의 최근 레코드에서 역할별 단계 우선, 없으면 MEMBERS 로컬값
+    var latestRec=(function(){
+      var fb=recs.length?recs:[].concat(allData).filter(function(r){return String(r.jo)===String(m.jo);});
+      return fb.length?fb[fb.length-1]:null;
+    })();
+    var serverStep=latestRec?(
+      m.role==='리더'  ?(latestRec.leaderStep ||''):
+      m.role==='훈련자'?(latestRec.trainerStep||''):
+                        (latestRec.traineeStep||'')
+    ):'';
+    var displayStep1=serverStep||m.step||'—';
     return '<tr>'+
       '<td class="td-jo" style="'+tdTop+'">'+m.jo+'</td>'+
       '<td class="td-name" style="'+tdTop+'">'+m.name+'</td>'+
-      '<td class="td-step" style="'+tdTop+'">'+m.step+'</td>'+
+      '<td class="td-step" style="'+tdTop+'">'+displayStep1+'</td>'+
       '<td style="'+tdTop+'"><span class="badge '+roleCls+'">'+m.role+'</span></td>'+
       '<td style="'+tdTop+'">'+(g||'—')+'</td>'+
       '<td style="'+tdTop+'">'+(c||'—')+'</td>'+
