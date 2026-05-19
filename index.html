@@ -3445,7 +3445,8 @@ async function handleOcrImage(event){
     formData.append('isOverlayRequired', 'false');
     formData.append('detectOrientation', 'true');
     formData.append('scale', 'true');
-    formData.append('OCREngine', '2'); // 엔진2: 한국어 정확도 높음
+    formData.append('isTable', 'false');
+    formData.append('OCREngine', '2'); // 엔진2: 한국어+손글씨
 
     var response=await fetch('https://api.ocr.space/parse/image',{
       method:'POST',
@@ -3458,7 +3459,15 @@ async function handleOcrImage(event){
     }
 
     var text=(data.ParsedResults&&data.ParsedResults[0]&&data.ParsedResults[0].ParsedText)||'';
-    if(!text.trim()) throw new Error('텍스트를 인식하지 못했습니다');
+    // 인식 결과가 없어도 계속 진행 (손글씨는 부분 인식될 수 있음)
+    if(!text.trim()){
+      statusEl.style.background='#fff8e1';
+      statusEl.style.borderColor='rgba(255,152,0,0.3)';
+      statusEl.style.color='#e65100';
+      statusEl.textContent='⚠️ 텍스트 인식 불가 — 이미지를 더 밝고 선명하게 촬영해주세요 (손글씨는 인쇄체보다 인식률이 낮습니다)';
+      event.target.value='';
+      return;
+    }
 
     // 인식된 텍스트에서 필드 추출
     var parsed=parseOcrText(text);
@@ -3514,7 +3523,14 @@ async function handleOcrImage(event){
     statusEl.style.background='#e8f5e9';
     statusEl.style.borderColor='rgba(46,125,50,0.3)';
     statusEl.style.color='#2e7d32';
-    statusEl.textContent='✅ 자동입력 완료! ('+filled+'개 항목 인식)';
+    if(filled>0){
+      statusEl.textContent='✅ 자동입력 완료! ('+filled+'개 항목 인식)';
+    } else {
+      statusEl.style.background='#fff8e1';
+      statusEl.style.borderColor='rgba(255,152,0,0.3)';
+      statusEl.style.color='#e65100';
+      statusEl.textContent='⚠️ 텍스트는 인식됐으나 입력 가능한 항목을 찾지 못했습니다 — 직접 입력해주세요';
+    }
     setTimeout(function(){statusEl.style.display='none';},4000);
 
   }catch(e){
