@@ -754,7 +754,12 @@ window.onload=function(){
 
   buildWeekSelect();
   updateConnBadge();
-  loadData();
+  // 조정보(단계 포함) 서버에서 자동 로드 후 보고서 데이터 로드
+  if(CFG.url){
+    syncJoFromServer().finally(function(){ loadData(); });
+  } else {
+    loadData();
+  }
   // 토글 초기 UI 상태 동기화 (실시만 보기 = ON)
   var track=document.getElementById('toggle-track-0');
   var thumb=document.getElementById('toggle-thumb-0');
@@ -822,9 +827,22 @@ function parseRecords(raw){
       leader:   g('훈련자(조장)'),
       trainer:  g('훈련자'),
       trainee:  g('훈련생'),
-      leaderStep:  g('훈련자(조장)단계')||g('조장단계')||g('리더단계'),
-      trainerStep: g('훈련자단계'),
-      traineeStep: g('훈련생단계'),
+      // 단계: 시트 컬럼 우선, 없으면 MEMBERS 이름 매칭으로 보완
+      leaderStep: g('훈련자(조장)단계')||g('조장단계')||g('리더단계')||(function(){
+        var nm=g('훈련자(조장)'); if(!nm) return '';
+        var m=MEMBERS.find(function(x){return x.name===nm&&x.role==='리더';});
+        return m?m.step:'';
+      })(),
+      trainerStep: g('훈련자단계')||(function(){
+        var nm=g('훈련자'); if(!nm) return '';
+        var m=MEMBERS.find(function(x){return x.name===nm&&x.role==='훈련자';});
+        return m?m.step:'';
+      })(),
+      traineeStep: g('훈련생단계')||(function(){
+        var nm=g('훈련생'); if(!nm) return '';
+        var m=MEMBERS.find(function(x){return x.name===nm&&x.role==='훈련생';});
+        return m?m.step:'';
+      })(),
       contact:  num(g('접촉횟수')),
       gospel:   num(g('복음제시')),
       target:   num(g('대상자')),
@@ -1035,7 +1053,7 @@ function renderTab0(data,w){
       var roleCls=m.role==='리더'?'color:#111111;font-weight:700;':m.role==='훈련자'?'color:#1565c0;':'color:#666;';
       var roleBadge=m.role==='리더'?'<span class="badge b-blue">조장</span>':m.role==='훈련자'?'<span class="badge b-green">훈련자</span>':'<span class="badge b-gray">훈련생</span>';
 
-      // 서버 단계: 이번 주 레코드 우선, 없으면 allData 전체에서 해당 조 최신 레코드 참조
+      // 단계: 이번 주 레코드 → allData 최신 → MEMBERS 순으로 폴백
       var stepRec=rec||(function(){
         var fb=allData.filter(function(r){return String(r.jo)===String(jo);});
         return fb.length?fb[fb.length-1]:null;
@@ -1162,9 +1180,9 @@ function renderTab1(data,w){
     totals.decision+=d;totals.believer+=b;totals.confirm+=cf;totals.reject+=rj;totals.week7+=w7;
     var roleCls=m.role==='리더'?'b-blue':m.role==='훈련자'?'b-orange':'b-gray';
     var tdTop=isFirstOfJo?'border-top:2px solid #8fa3d0;':'';
-    // 서버 단계: 해당 조의 최근 레코드에서 역할별 단계 우선, 없으면 MEMBERS 로컬값
+    // 단계: 해당 조 레코드 → allData 최신 → MEMBERS 순으로 폴백
     var latestRec=(function(){
-      var fb=recs.length?recs:[].concat(allData).filter(function(r){return String(r.jo)===String(m.jo);});
+      var fb=recs.length?recs:allData.filter(function(r){return String(r.jo)===String(m.jo);});
       return fb.length?fb[fb.length-1]:null;
     })();
     var serverStep=latestRec?(

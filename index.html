@@ -199,6 +199,7 @@ pre.code-block{background:#1a1e3a;color:#d4d4d4;padding:11px;border-radius:6px;f
   transform-origin:top left;
   margin:0 auto;
 }
+
 .doc-header-row{display:flex;justify-content:flex-end;margin-bottom:12px;}
 .doc-title-block{display:flex;align-items:center;gap:8px;}
 .doc-globe{font-size:22px;}
@@ -1772,8 +1773,16 @@ function onJoSelect(){
   autoDocNumber();
   syncPreview();
 }
-function openJoModal(){var arr=getJoData();var el=document.getElementById('jo-editor-list');el.innerHTML='';arr.forEach(function(j,i){el.appendChild(makeJoRow(j,i));});document.getElementById('jo-modal-bg').classList.add('open');}
-function closeJoModal(){document.getElementById('jo-modal-bg').classList.remove('open');}
+function openJoModal(){
+  var arr=getJoData();
+  var el=document.getElementById('jo-editor-list');
+  el.innerHTML='';
+  arr.forEach(function(j,i){el.appendChild(makeJoRow(j,i));});
+  document.getElementById('jo-modal-bg').classList.add('open');
+}
+function closeJoModal(){
+  document.getElementById('jo-modal-bg').classList.remove('open');
+}
 function makeJoRow(j,i){
   var div=document.createElement('div');
   div.style.cssText='display:flex;flex-direction:column;gap:4px;background:#f7f9ff;border:1px solid rgba(32,80,200,0.13);border-radius:6px;padding:6px;';
@@ -1789,7 +1798,7 @@ function makeJoRow(j,i){
       '<span style="font-size:9px;color:rgba(32,80,200,0.5);font-weight:700;">조</span>'+
       '<input data-f="jo" value="'+(j.jo||'')+'" placeholder="번호" style="'+inputStyle+'width:36px;text-align:center;font-weight:700;">'+
     '</div>'+
-    '<button type="button" onclick="this.closest(\'div\').closest(\'div\').remove()" style="background:#fdecea;border:none;border-radius:5px;color:#c00;font-size:11px;font-weight:700;cursor:pointer;padding:4px 6px;flex-shrink:0;margin-left:auto;">✕</button>'+
+    '<button type="button" onclick="removeJoCard(this)" style="background:#fdecea;border:none;border-radius:5px;color:#c00;font-size:11px;font-weight:700;cursor:pointer;padding:4px 6px;flex-shrink:0;margin-left:auto;" title="이 조 삭제">🗑 삭제</button>'+
   '</div>';
   // 2행: 조장 이름 + 단계
   var row2='<div style="display:flex;gap:4px;align-items:flex-end;">'+
@@ -1827,7 +1836,22 @@ function makeJoRow(j,i){
   div.innerHTML=row1+row2+row3+row4+'<input data-f="ban" type="hidden" value="수지주일반">';
   return div;
 }
-function addJoRow(){var el=document.getElementById('jo-editor-list');el.appendChild(makeJoRow({jo:'',leader:'',leaderStep:'',trainer:'',trainerStep:'',trainee:'',traineeStep:'',group:''},el.children.length));el.lastChild.querySelector('input').focus();}
+function removeJoCard(btn){
+  var card=btn.closest('#jo-editor-list > div');
+  if(!card) return;
+  var joNum=card.querySelector('input[data-f="jo"]');
+  var joVal=joNum?joNum.value.trim():'';
+  var msg=joVal ? joVal+'조를 삭제하시겠습니까?' : '이 조를 삭제하시겠습니까?';
+  if(!confirm(msg)) return;
+  card.style.transition='opacity .2s';
+  card.style.opacity='0';
+  setTimeout(function(){card.remove();},200);
+}
+function addJoRow(){
+  var el=document.getElementById('jo-editor-list');
+  el.appendChild(makeJoRow({jo:'',leader:'',leaderStep:'',trainer:'',trainerStep:'',trainee:'',traineeStep:'',group:''},el.children.length));
+  el.lastChild.querySelector('input').focus();
+}
 // ── 조정보 서버 동기화 ───────────────────────────────────────────
 async function syncJoToServer(joArray){
   if(!scriptUrl)return;
@@ -1856,11 +1880,16 @@ async function loadJoFromServer(){
         return j;
       });
       saveJoDataLS(joDataWithStep);
-      // 단계 보완된 데이터를 서버에도 다시 저장
       syncJoToServer(joDataWithStep);
       buildJoDropdown();
-      // ban은 고정값, group은 조별 데이터에 포함되어 있으므로 별도 저장 불필요
       localStorage.setItem('suju_ban', '수지주일반');
+      // 조편집 모달이 열려있으면 UI 자동 갱신
+      var modal=document.getElementById('jo-modal-bg');
+      if(modal&&modal.classList.contains('open')){
+        var el=document.getElementById('jo-editor-list');
+        el.innerHTML='';
+        joDataWithStep.forEach(function(j,i){el.appendChild(makeJoRow(j,i));});
+      }
       showStatus('✅ 조정보를 서버에서 불러왔습니다. ('+json.joData.length+'개 조)','success');
     } else {
       showStatus('서버에 저장된 조정보가 없습니다.','info');
