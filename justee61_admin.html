@@ -1131,29 +1131,35 @@ function renderTab0(data,w){
         ):'')+'';
 
       // 참관 — 조원별 개별 셀
-      html+='<td style="font-size:11px;text-align:center;color:#7b1fa2;border-left:2px solid #8fa3d0;">'+((!noData&&action==='참관하였고')?'◉':'—')+'</td>';
+      html+='<td style="font-size:16px;text-align:center;color:#7b1fa2;border-left:2px solid #8fa3d0;">'+((!noData&&action==='참관하였고')?'●':'')+'</td>';
 
       // 복음참여 역할배분 — 관계(팀):파랑 / 그 외:주황 / 참관:colspan
       var PARTS=['서론','은혜','인간','하나님','그리스도','믿음','결신','즉석양육'];
       var PARTS_SHORT={'서론':'서','은혜':'은','인간':'인','하나님':'하','그리스도':'그','믿음':'믿','결신':'결','즉석양육':'즉'};
-      var isTeam=rec&&rec.evangType==='관계(팀)';
-      var mkChar=isTeam?'🔵':'🟠';
+      // 전도유형 기준 마크 색상: 관계(팀)→파랑, 그 외→주황
+      var evangType=rec?rec.evangType||'':'';
+      var isTeam=evangType==='관계(팀)';
+      var markColor=isTeam?'color:#1565c0;':'color:#e65100;';
       var mPart=m.role==='리더'  ?(rec?rec.leaderPart :''):
                m.role==='훈련자'?(rec?rec.trainerPart:''):
                                   (rec?rec.traineePart:'');
       var partArr=mPart?mPart.split(',').map(function(s){return s.trim();}).filter(Boolean):[];
-      // 참관: 8칸 colspan — 관계(팀)이면 파란색, 그 외 보라색
+      // 참관: 복음참여 8칸은 빈칸
       if(action==='참관하였고'){
-        var obsColor=isTeam?'color:#1565c0;':'color:#7b1fa2;';
-        html+='<td colspan="8" style="text-align:center;font-size:10px;font-weight:700;'+obsColor+'border-right:2px solid #8fa3d0;letter-spacing:2px;">참　관</td>';
+        html+='<td style="border-right:2px solid #8fa3d0;"></td>'.repeat(0);
+        for(var pi2=0;pi2<8;pi2++){
+          var isLast2=pi2===7;
+          var bs2=isLast2?'border-right:2px solid #8fa3d0;':'';
+          html+='<td style="'+bs2+'"></td>';
+        }
       } else {
         var partCells=PARTS.map(function(p,pi){
           var isLast=pi===PARTS.length-1;
           var borderStyle=isLast?'border-right:2px solid #8fa3d0;':'';
           var short=PARTS_SHORT[p]||p;
-          if(action!=='하였고') return '<td style="font-size:9px;color:#ddd;text-align:center;'+borderStyle+'">·</td>';
-          if(partArr.indexOf(p)>-1) return '<td style="font-size:10px;font-weight:700;text-align:center;'+(isTeam?'color:#1565c0;':'color:#e65100;')+borderStyle+'">'+short+'</td>';
-          return '<td style="text-align:center;color:#ccc;font-size:10px;'+borderStyle+'">·</td>';
+          if(action!=='하였고') return '<td style="'+borderStyle+'"></td>';
+          if(partArr.indexOf(p)>-1) return '<td style="font-size:16px;text-align:center;'+markColor+borderStyle+'">●</td>';
+          return '<td style="text-align:center;color:#e0e0e0;font-size:10px;'+borderStyle+'">·</td>';
         });
         html+=partCells.join('');
       }
