@@ -227,16 +227,7 @@ body {
   overflow: hidden;
 }
 
-.sum-card::after {
-  content: '';
-  position: absolute;
-  right: -10px;
-  bottom: -10px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: rgba(26, 58, 176, 0.04);
-}
+
 
 .sum-card.green {
   border-top-color: var(--green);
@@ -1173,19 +1164,33 @@ tr:last-child td {
       <div class="wb-title">복음참여현황 (누적)</div>
       <div class="wb-sub" id="wb-sub-1">1주 ~ — 주 누적</div>
     </div>
-    <div class="wb-right">
-      <div class="wb-rate" id="wb-rate-1">—</div>
-      <div class="wb-rate-label">결신율</div>
-    </div>
   </div>
 
-  <div class="sum-grid">
-    <div class="sum-card"><div class="sum-label">총인원</div><div class="sum-val" id="total-members">—</div><div class="sum-sub" id="total-jo">—</div></div>
-    <div class="sum-card red"><div class="sum-label">결신(누적)</div><div class="sum-val" id="acc-decision">—</div></div>
-    <div class="sum-card green"><div class="sum-label">이미신자(누적)</div><div class="sum-val" id="acc-believer">—</div></div>
-    <div class="sum-card blue"><div class="sum-label">확신(누적)</div><div class="sum-val" id="acc-confirm">—</div></div>
-    <div class="sum-card yellow"><div class="sum-label">복음제시(누적)</div><div class="sum-val" id="acc-gospel">—</div></div>
-    <div class="sum-card orange"><div class="sum-label">관계전도(누적)</div><div class="sum-val" id="acc-rel">—</div></div>
+  <div class="tbl-wrap" style="margin-bottom:14px;">
+    <table style="width:100%;border-collapse:collapse;table-layout:fixed;">
+      <thead>
+        <tr style="background:#1a3ab0;">
+          <th style="color:#fff;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">접촉자수</th>
+          <th style="color:#fff;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">복음제시</th>
+          <th style="color:#e57373;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">결신</th>
+          <th style="color:#ffb74d;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">보류/거절</th>
+          <th style="color:#90caf9;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">확신</th>
+          <th style="color:#a5d6a7;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">이미신자</th>
+          <th style="color:#ffe082;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">결신율</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#fff;">
+          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;" id="acc-contact">—</td>
+          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;" id="acc-gospel">—</td>
+          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:var(--red);" id="acc-decision">—</td>
+          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:var(--orange);" id="acc-reject">—</td>
+          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:var(--blue);" id="acc-confirm">—</td>
+          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:var(--green);" id="acc-believer">—</td>
+          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:var(--primary);" id="wb-rate-1">—</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <div class="sec-title">조별 누적 복음참여 현황</div>
@@ -2622,21 +2627,20 @@ function renderTab1(data, w) {
     }).join('') +
     '<td colspan="2"></td>';
 
-  var rTotal1 = totals.believer + totals.decision + totals.confirm + totals.reject;
-  var rateDenom1 = rTotal1 - totals.believer - totals.confirm;
-  var rate = rateDenom1 > 0 ? Math.round((totals.decision / rateDenom1) * 1000) / 10 : 0;
+  // 복음제시 = 결신 + 보류/거절 + 확신 + 이미신자
+  var calcGospel = totals.decision + totals.reject + totals.confirm + totals.believer;
+  // 결신율 = 결신 / (복음제시 - 확신 - 이미신자)
+  var rateDenom = calcGospel - totals.confirm - totals.believer;
+  var rate = rateDenom > 0 ? Math.round((totals.decision / rateDenom) * 1000) / 10 : 0;
   setText('wb-rate-1', rate > 0 ? rate + '%' : '—');
   setText('wb-sub-1', '1주 ~ ' + w + '주 누적');
   setText('week-label-1', '1주~' + w + '주 누적');
+  setText('acc-contact', totals.contact || '—');
   setText('acc-decision', totals.decision || '—');
   setText('acc-believer', totals.believer || '—');
   setText('acc-confirm', totals.confirm || '—');
-  setText('acc-gospel', totals.gospel || '—');
-  setText('acc-rel', totals.contact || '—');
-  setText('total-members', MEMBERS.length);
-  setText('total-jo', [...new Set(MEMBERS.map(function(m) {
-    return m.jo;
-  }))].length + '개 조');
+  setText('acc-gospel', calcGospel || '—');
+  setText('acc-reject', totals.reject || '—');
 }
 
 // ── TAB 2: 팀전도현황 (누적) ────────────────────────────────────────────────
