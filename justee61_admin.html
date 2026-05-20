@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>61기 수주반 모니터링</title>
+<title>61기 수지주일반 전도현황</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -60,7 +60,8 @@ body {
   color: #90caf9;
   font-weight: 300;
   font-size: 11px;
-  margin-left: 6px;
+  display: block;
+  letter-spacing: 2px;
 }
 
 .topbar-right {
@@ -963,7 +964,7 @@ tr:last-child td {
   <div class="lock-box">
     <div class="lock-icon">🔐</div>
     <h2>관리자 인증</h2>
-    <p>61기 수주반 모니터링<br>접근 권한이 필요합니다.</p>
+    <p>61기 수지주일반 전도현황<br>접근 권한이 필요합니다.</p>
     <input class="lock-input" type="password" id="lock-input" maxlength="10" placeholder="••••" oninput="onLockInput()" onkeydown="if(event.key==='Enter')checkPassword()">
     <button class="lock-btn" onclick="checkPassword()">🔓 확인</button>
     <div class="lock-error" id="lock-error"></div>
@@ -971,7 +972,7 @@ tr:last-child td {
 </div>
 
 <div class="topbar">
-  <div class="topbar-title">61기 수주반 모니터링<span>EVANGELISM MONITORING</span></div>
+  <div class="topbar-title">61기 수지주일반 전도현황<br><span>Evangelism Monitoring</span></div>
   <div class="topbar-right">
     <div class="conn-badge"><span class="conn-dot" id="conn-dot"></span><span id="conn-label">미연결</span></div>
     <button class="tb-btn" onclick="openSettings()">⚙️ 설정</button>
