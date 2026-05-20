@@ -1169,25 +1169,25 @@ tr:last-child td {
   <div class="tbl-wrap" style="margin-bottom:14px;">
     <table style="width:100%;border-collapse:collapse;table-layout:fixed;">
       <thead>
-        <tr style="background:#1a3ab0;">
-          <th style="color:#fff;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">접촉자수</th>
-          <th style="color:#fff;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">복음제시</th>
-          <th style="color:#e57373;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">결신</th>
-          <th style="color:#ffb74d;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">보류/거절</th>
-          <th style="color:#90caf9;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">확신</th>
-          <th style="color:#a5d6a7;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">이미신자</th>
-          <th style="color:#ffe082;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">결신율</th>
+        <tr style="background:#f0f2f5;border-bottom:2px solid #d0d5e0;">
+          <th style="color:#222;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">접촉자수</th>
+          <th style="color:#222;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">복음제시</th>
+          <th style="color:#222;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">결신</th>
+          <th style="color:#222;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">보류/거절</th>
+          <th style="color:#222;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">확신</th>
+          <th style="color:#222;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">이미신자</th>
+          <th style="color:#222;font-size:10px;font-weight:700;padding:8px 4px;text-align:center;letter-spacing:.3px;">결신율</th>
         </tr>
       </thead>
       <tbody>
         <tr style="background:#fff;">
-          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;" id="acc-contact">—</td>
-          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;" id="acc-gospel">—</td>
-          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:var(--red);" id="acc-decision">—</td>
-          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:var(--orange);" id="acc-reject">—</td>
-          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:var(--blue);" id="acc-confirm">—</td>
-          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:var(--green);" id="acc-believer">—</td>
-          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:var(--primary);" id="wb-rate-1">—</td>
+          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;" id="acc-contact">—</td>
+          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;" id="acc-gospel">—</td>
+          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--red);" id="acc-decision">—</td>
+          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--orange);" id="acc-reject">—</td>
+          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--blue);" id="acc-confirm">—</td>
+          <td style="text-align:center;padding:10px 4px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--green);" id="acc-believer">—</td>
+          <td style="text-align:center;padding:10px 4px;font-size:16px;font-weight:700;color:var(--primary);" id="wb-rate-1">—</td>
         </tr>
       </tbody>
     </table>
@@ -2588,7 +2588,11 @@ function renderTab1(data, w) {
         var leaderName = (joLeader && m.role !== '리더') ? joLeader.name : '—';
 
         var personalCnt = allRecs.filter(function(r) {
-          return r.evangType === '개인' || r.evangType === '질문지' || r.evangType === '질문지(팀)';
+          if (r.evangType !== '개인' && r.evangType !== '질문지' && r.evangType !== '질문지(팀)') return false;
+          // 본인 이름이 해당 역할 필드에 있는 건수만 집계
+          if (m.role === '리더') return r.leader === m.name;
+          if (m.role === '훈련자') return r.trainer === m.name;
+          return r.trainee === m.name;
         }).length;
 
         var dates = actRecs.map(function(r) {
@@ -2606,10 +2610,17 @@ function renderTab1(data, w) {
           '<td class="td-name" style="' + nameCls + '">' + m.name + '</td>' +
           '<td style="font-size:10px;color:#666;text-align:center;">' + leaderName + '</td>' +
           '<td style="text-align:center;">' + (personalCnt || '—') + '</td>' +
-          PARTS.map(function(p) {
+          PARTS.map(function(p, i) {
             var cnt = partCounts[p];
-            return '<td style="text-align:center;' + (cnt ? 'font-weight:700;color:#1565c0;' : 'color:#ddd;') + '">' +
-              (cnt ? cnt : '·') + '</td>';
+            var isLast = i === PARTS.length - 1; // 즉석양육(마지막) 오른쪽 border
+            var isFirst = i === 0; // 간증 — 검정
+            var borderStyle = isLast ? 'border-right:2px solid #8fa3d0;' : '';
+            if (cnt) {
+              var color = isFirst ? '#222' : '#1565c0';
+              return '<td style="text-align:center;font-weight:700;color:' + color + ';' + borderStyle + '">' + cnt + '</td>';
+            } else {
+              return '<td style="text-align:center;color:#4a90d9;' + borderStyle + '">●</td>';
+            }
           }).join('') +
           '<td style="font-size:10px;text-align:center;color:#666;">' + lastDate + '</td>' +
           '<td style="font-size:10px;color:#333;">' + m.name + '</td>' +
@@ -2622,8 +2633,12 @@ function renderTab1(data, w) {
 
   document.getElementById('tf-gospel').innerHTML =
     '<td colspan="6" style="text-align:left;padding-left:10px;font-weight:700;">합계</td>' +
-    PARTS.map(function(p) {
-      return '<td style="text-align:center;font-weight:700;">' + (partTotals[p] || '—') + '</td>';
+    PARTS.map(function(p, i) {
+      var isLast = i === PARTS.length - 1;
+      var isFirst = i === 0;
+      var borderStyle = isLast ? 'border-right:2px solid #8fa3d0;' : '';
+      var color = isFirst ? '#222' : '#1565c0';
+      return '<td style="text-align:center;font-weight:700;color:' + color + ';' + borderStyle + '">' + (partTotals[p] || '—') + '</td>';
     }).join('') +
     '<td colspan="2"></td>';
 
@@ -2632,7 +2647,7 @@ function renderTab1(data, w) {
   // 결신율 = 결신 / (복음제시 - 확신 - 이미신자)
   var rateDenom = calcGospel - totals.confirm - totals.believer;
   var rate = rateDenom > 0 ? Math.round((totals.decision / rateDenom) * 1000) / 10 : 0;
-  setText('wb-rate-1', rate > 0 ? rate + '%' : '—');
+  setText('wb-rate-1', rate > 0 ? rate.toFixed(1) + '%' : '—');
   setText('wb-sub-1', '1주 ~ ' + w + '주 누적');
   setText('week-label-1', '1주~' + w + '주 누적');
   setText('acc-contact', totals.contact || '—');
@@ -2709,7 +2724,7 @@ function renderTab2(data, w) {
   var rTotal2 = totalBeliever + totalDecision + totalConfirm + totalReject;
   var rateDenom2 = rTotal2 - totalBeliever - totalConfirm;
   var rate = rateDenom2 > 0 ? Math.round((totalDecision / rateDenom2) * 1000) / 10 : 0;
-  setText('wb-rate-2', rate > 0 ? rate + '%' : '—');
+  setText('wb-rate-2', rate > 0 ? rate.toFixed(1) + '%' : '—');
   setText('wb-sub-2', '1주 ~ ' + w + '주 누적');
   setText('week-label-2', '1주~' + w + '주 누적');
 }
@@ -2871,7 +2886,7 @@ function renderTab3(selectedWeek) {
       '<td>' + (confirm || '—') + '</td>' +
       '<td>' + (believer || '—') + '</td>' +
       '<td>' + (rel || '—') + '</td>' +
-      '<td style="border-right:2px solid #8fa3d0 !important;">' + (rate > 0 ? '<b style="color:var(--red)">' + rate + '%</b>' : '—') + '</td>' +
+      '<td style="border-right:2px solid #8fa3d0 !important;">' + (rate > 0 ? '<b style="color:var(--red)">' + rate.toFixed(1) + '%</b>' : '—') + '</td>' +
       '</tr>';
   }
 
@@ -2903,9 +2918,9 @@ function renderTab3(selectedWeek) {
     '<td>' + totals.confirm + '</td>' +
     '<td>' + totals.imisinja + '</td>' +
     '<td>' + totals.rel + '</td>' +
-    '<td style="border-right:2px solid #8fa3d0 !important;"><b style="color:var(--red)">' + (totalRate > 0 ? totalRate + '%' : '—') + '</b></td>';
+    '<td style="border-right:2px solid #8fa3d0 !important;"><b style="color:var(--red)">' + (totalRate > 0 ? totalRate.toFixed(1) + '%' : '—') + '</b></td>';
 
-  setText('wb-rate-3', totalRate > 0 ? totalRate + '%' : '—');
+  setText('wb-rate-3', totalRate > 0 ? totalRate.toFixed(1) + '%' : '—');
   setText('wb-sub-3', '1주 ~ ' + selectedWeek + '주 누적');
 }
 
