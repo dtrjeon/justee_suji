@@ -1306,7 +1306,44 @@ function error(m){return ContentService.createTextOutput(JSON.stringify({status:
 // ══════════════════════════════════════════════════════
 
 // iOS radio touch fix
-(function(){var _t=0;document.addEventListener('touchstart',function(e){if(e.target.matches('.rb input[type=radio],.yj-btn input[type=radio]'))_t=Date.now();},{passive:true});document.addEventListener('touchend',function(e){var i=e.target;if(!i.matches('.rb input[type=radio],.yj-btn input[type=radio]'))return;if(Date.now()-_t<300){e.preventDefault();if(!i.checked){i.checked=true;i.dispatchEvent(new Event('change',{bubbles:true}));}}},{passive:false});})();
+(function(){
+  var _t=0, _sx=0, _sy=0, _scrolling=false, _scrollTimer=null;
+
+  // 스크롤 감지
+  document.addEventListener('touchstart', function(e){
+    _sx=e.touches[0].clientX;
+    _sy=e.touches[0].clientY;
+    _scrolling=false;
+    if(e.target.matches('.rb input[type=radio],.yj-btn input[type=radio]')) _t=Date.now();
+  },{passive:true});
+
+  document.addEventListener('touchmove', function(e){
+    var dx=Math.abs(e.touches[0].clientX-_sx);
+    var dy=Math.abs(e.touches[0].clientY-_sy);
+    // 10px 이상 움직이면 스크롤로 판단
+    if(dx>10||dy>10){
+      _scrolling=true;
+      clearTimeout(_scrollTimer);
+      // 스크롤 끝난 후 300ms 동안 터치 잠금
+      _scrollTimer=setTimeout(function(){_scrolling=false;},300);
+    }
+  },{passive:true});
+
+  document.addEventListener('touchend', function(e){
+    var i=e.target;
+    if(!i.matches('.rb input[type=radio],.yj-btn input[type=radio]')) return;
+    // 스크롤 중이거나 스크롤 직후면 무시
+    if(_scrolling) return;
+    // 300ms 이내 탭만 허용
+    if(Date.now()-_t<300){
+      e.preventDefault();
+      if(!i.checked){
+        i.checked=true;
+        i.dispatchEvent(new Event('change',{bubbles:true}));
+      }
+    }
+  },{passive:false});
+})();
 
 const APP_VERSION='index v2026.05.19';
 const LS_KEY='report_test_records';
