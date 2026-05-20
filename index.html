@@ -1947,45 +1947,7 @@ pre.code-block {
       </details>
     </div>
 
-<!-- Gemini API 키 등록 모달 -->
-<div id="gemini-key-modal" class="modal-bg" style="display:none;">
-  <div class="modal" style="max-width:420px;">
-    <h3>🔑 GEMINI API 키 등록</h3>
-    <p style="font-size:13px;color:#1565c0;font-weight:600;margin-bottom:6px;">OCR 인식 후 Gemini AI가 필드를 자동으로 분석합니다 (무료)</p>
-    <p>Google AI Studio에서 발급한 API 키를 등록해주세요.</p>
-    <div class="setup-steps">
-      <b>무료 API 키 발급 방법</b><br>
-      1. <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com/app/apikey</a> 접속<br>
-      2. Google 계정 로그인<br>
-      3. <b>Create API key</b> 클릭<br>
-      4. 생성된 키를 아래에 붙여넣기
-    </div>
-    <input type="text" id="gemini-key-input" placeholder="AIza..." style="margin-bottom:12px;font-size:14px;letter-spacing:1px;"/>
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeGeminiModal()">취소</button>
-      <button class="btn-save" onclick="saveGeminiKey()" style="background:linear-gradient(135deg,#1565c0,#0d47a1);">저장 &amp; 분석 시작</button>
-    </div>
-  </div>
-</div>
-<div id="claude-key-modal" class="modal-bg" style="display:none;">
-  <div class="modal" style="max-width:420px;">
-    <h3>☁️ CLAUDE AI 연동</h3>
-    <p style="font-size:13px;color:#4c1d95;font-weight:600;margin-bottom:6px;">Claude AI를 이용하면 손글씨도 정확하게 인식됩니다!</p>
-    <p>Anthropic API 키를 등록하면 공개보고서 이미지를 Claude AI가 직접 분석하여 자동으로 입력해드립니다.</p>
-    <div class="setup-steps">
-      <b>API 키 발급 방법</b><br>
-      1. <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> 접속<br>
-      2. 회원가입 → API Keys → Create Key<br>
-      3. 생성된 키(sk-ant-...)를 아래에 붙여넣기
-    </div>
-    <input type="text" id="claude-key-input" placeholder="sk-ant-api03-..." style="margin-bottom:4px;font-size:14px;letter-spacing:1px;" oninput="validateClaudeKey()"/>
-    <p id="claude-key-hint" style="font-size:11px;color:#ef4444;margin-bottom:10px;display:none;">⚠️ 키 형식이 올바르지 않습니다 (sk-ant- 로 시작해야 합니다)</p>
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeClaudeKeyModal()">취소</button>
-      <button class="btn-save" id="claude-key-save-btn" onclick="saveClaudeKey()" style="background:linear-gradient(135deg,#7c3aed,#4c1d95);">저장 &amp; 분석 시작</button>
-    </div>
-  </div>
-</div>
+<!-- API 키 모달 제거됨: OCR/Gemini/Claude 키는 GAS 스크립트 속성에서 관리 -->
     <div style="display:flex;gap:8px;margin-bottom:10px;">
       <div class="fld" style="flex:1;margin-bottom:0;">
         <div class="lbl">관계 <span style="font-weight:400;font-size:10px;color:rgba(0,0,0,0.4);">(대상자 모신분)</span></div>
@@ -2860,7 +2822,7 @@ const DIAG_MAP = {
   }
 };
 let currentMode = 'server';
-let scriptUrl = localStorage.getItem('apps_script_url') || 'https://script.google.com/macros/s/AKfycbxT-7zi0zal3tSYVp4fkfhaSR930phfW_vjqAo2ST8O9vLtR8Bme9JejgQhTKJ3Lfo6/exec';
+let scriptUrl = localStorage.getItem('apps_script_url') || 'https://script.google.com/macros/s/AKfycbz3VAjIO-7HzGEB_fEduC_m6WnIUOhwCjphk7omGlM7YTHreMMmLGX5luvXCTzNhHrV/exec';
 var _lastSavedDiagResult = '';
 
 var _autoSaveTimer = null;
@@ -4443,7 +4405,7 @@ async function submitServer() {
       var btn2 = document.getElementById('submit-btn');
       if (btn2) {
         btn2.style.background = '';
-        btn2.textContent = '📤 구글 시트에 제출';
+        btn2.innerHTML = '📤 구글 시트에 제출';
       }
       if (confirm('제출이 완료되었습니다.\n폼을 초기화하시겠습니까?')) {
         resetForm();
@@ -4789,7 +4751,8 @@ function loadRecord(idx) {
   var sbtn = document.getElementById('submit-btn');
   if (sbtn) {
     sbtn.style.background = 'linear-gradient(135deg,#e65100,#bf360c)';
-    sbtn.textContent = '📝 수정 제출 (' + (data.doc_number || '') + ')';
+    sbtn.style.textAlign = 'center';
+    sbtn.innerHTML = '📝 수정 제출<br><span style="font-size:11px;font-weight:400;">(' + (data.doc_number || '') + ')</span>';
   }
   showStatus('✅ 기록 불러옴 — 수정 후 제출하면 이력 보존 + 최신본으로 모니터링에 표시됩니다.', 'success');
 }
@@ -5965,62 +5928,19 @@ function closeOcrDebug() {
 // ────────────────────────────────────────────────────────────
 
 // ── Claude AI 자동인식 ──────────────────────────────────────
-var CLAUDE_KEY_STORAGE = 'claude_api_key';
-
-function getClaudeKey() {
-  return localStorage.getItem(CLAUDE_KEY_STORAGE) || '';
-}
-
+// Claude AI: API 키는 GAS 서버에서 관리 (브라우저에 키 없음)
 function updateClaudeDot() {
   var dot = document.getElementById('claude-api-dot');
   if (!dot) return;
-  if (getClaudeKey()) {
-    dot.style.display = 'none';
-  } else {
-    dot.style.background = '#ef4444';
-    dot.style.display = 'block';
-  }
+  dot.style.display = scriptUrl ? 'none' : 'block';
 }
 
 function handleClaudeBtn() {
-  var key = getClaudeKey();
-  if (!key) {
-    // API 키 미등록 → 모달 표시
-    document.getElementById('claude-key-modal').style.display = 'flex';
+  if (!scriptUrl) {
+    openModal();
+    showStatus('먼저 구글 시트를 연결해 주세요.', 'error');
     return;
   }
-  // API 키 있으면 파일 선택
-  var inp = document.getElementById('claude-file-input');
-  inp.style.display = 'block';
-  inp.click();
-}
-
-function validateClaudeKey() {
-  var v = document.getElementById('claude-key-input').value.trim();
-  var hint = document.getElementById('claude-key-hint');
-  var btn = document.getElementById('claude-key-save-btn');
-  if (v && !v.startsWith('sk-ant-')) {
-    hint.style.display = 'block';
-    btn.disabled = true;
-  } else {
-    hint.style.display = 'none';
-    btn.disabled = false;
-  }
-}
-
-function closeClaudeKeyModal() {
-  document.getElementById('claude-key-modal').style.display = 'none';
-}
-
-function saveClaudeKey() {
-  var v = document.getElementById('claude-key-input').value.trim();
-  if (!v) {
-    return;
-  }
-  localStorage.setItem(CLAUDE_KEY_STORAGE, v);
-  closeClaudeKeyModal();
-  updateClaudeDot();
-  // 저장 직후 파일 선택 실행
   var inp = document.getElementById('claude-file-input');
   inp.style.display = 'block';
   inp.click();
@@ -6038,9 +5958,11 @@ function initClaudeInput() {
 async function handleClaudeImage(event) {
   var file = event.target.files[0];
   if (!file) return;
-  var key = getClaudeKey();
-  if (!key) {
-    document.getElementById('claude-key-modal').style.display = 'flex';
+
+  if (!scriptUrl) {
+    openModal();
+    showStatus('먼저 구글 시트를 연결해 주세요.', 'error');
+    event.target.value = '';
     return;
   }
 
@@ -6055,63 +5977,24 @@ async function handleClaudeImage(event) {
     // 이미지 → base64
     var base64 = await new Promise(function(res, rej) {
       var r = new FileReader();
-      r.onload = function(ev) {
-        res(ev.target.result.split(',')[1]);
-      };
-      r.onerror = function() {
-        rej(new Error('파일 읽기 실패'));
-      };
+      r.onload = function(ev) { res(ev.target.result.split(',')[1]); };
+      r.onerror = function() { rej(new Error('파일 읽기 실패')); };
       r.readAsDataURL(file);
     });
 
     var mediaType = file.type || 'image/jpeg';
 
-    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+    // GAS 프록시로 전송 (API 키는 서버에서 관리)
+    var resp = await fetch(scriptUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: '공개보고서 이미지를 분석하여 아래 JSON만 반환하세요. 다른 텍스트 없이 JSON만 출력하세요.\n{\n"location":"거주지역(시/동)",\n"name":"성씨 한글자만(예:김)",\n"age":"나이 숫자만",\n"marriage":"기혼 또는 미혼",\n"gender":"남자 또는 여자",\n"meet_place":"만난장소",\n"target_type":"질문지 또는 지인/지인가족 또는 가족 또는 기타",\n"religion":"기독교 또는 천주교 또는 불교 또는 무교 중 하나",\n"job":"직업",\n"heaven":"있었고 또는 없었고",\n"reason":"믿음 또는 행위 또는 불확실 또는 대답안함",\n"diagnosis":"비신자 또는 착각비신자 또는 확신부족 또는 이미신자",\n"q10":"현장 느낀점 전체",\n"q12":"기도제목"\n}',
-        messages: [{
-          role: 'user',
-          content: [{
-            type: 'image',
-            source: {
-              type: 'base64',
-              media_type: mediaType,
-              data: base64
-            }
-          }, {
-            type: 'text',
-            text: '이 공개보고서에서 정보를 추출해주세요.'
-          }]
-        }]
-      })
+      body: JSON.stringify({ action: 'ocr_claude', imageBase64: base64, mediaType: mediaType })
     });
-
-    if (resp.status === 401) {
-      localStorage.removeItem(CLAUDE_KEY_STORAGE);
-      updateClaudeDot();
-      throw new Error('API 키가 유효하지 않습니다. 다시 등록해주세요.');
-    }
-    if (!resp.ok) throw new Error('Claude API 오류: ' + resp.status);
-
+    if (!resp.ok) throw new Error('서버 오류: ' + resp.status);
     var data = await resp.json();
-    var raw = (data.content && data.content[0] && data.content[0].text) || '{}';
-    var clean = raw.replace(/```json|```/g, '').trim();
-    var parsed;
-    try {
-      parsed = JSON.parse(clean);
-    } catch (e) {
-      throw new Error('결과 파싱 실패: ' + e.message);
-    }
+    if (data.status !== 'ok') throw new Error(data.message || 'Claude API 오류');
 
-    // 폼 자동 입력
+    var parsed = data.parsed || {};
+    var clean = JSON.stringify(parsed); // already parsed by GAS
     var filled = 0;
 
     function sv(id, val) {
@@ -6204,11 +6087,7 @@ async function handleClaudeImage(event) {
     statusEl.style.borderColor = 'rgba(220,38,38,0.25)';
     statusEl.style.color = '#b91c1c';
     statusEl.textContent = '❌ ' + e.message;
-    if (e.message.indexOf('API 키') > -1) {
-      setTimeout(function() {
-        document.getElementById('claude-key-modal').style.display = 'flex';
-      }, 1200);
-    }
+    console.error('Claude AI 오류:', e);
   }
   event.target.value = '';
 }
@@ -6232,45 +6111,21 @@ function initOcrInput() {
     });
   }
 }
-// OCR.space API 키 (무료)
-var OCR_API_KEY = 'K83219514388957';
-var GEMINI_KEY_STORAGE = 'gemini_api_key';
-
-function getGeminiKey() {
-  return localStorage.getItem(GEMINI_KEY_STORAGE) || '';
-}
-
+// OCR + Gemini: API 키는 GAS 서버에서 관리 (브라우저에 키 없음)
 function updateGeminiDot() {
+  // 서버 연결 여부로 상태 표시
   var dot = document.getElementById('ocr-gemini-dot');
   if (!dot) return;
-  dot.style.display = getGeminiKey() ? 'none' : 'block';
-}
-
-function openGeminiModal() {
-  document.getElementById('gemini-key-modal').style.display = 'flex';
-}
-
-function closeGeminiModal() {
-  document.getElementById('gemini-key-modal').style.display = 'none';
-}
-
-function saveGeminiKey() {
-  var v = document.getElementById('gemini-key-input').value.trim();
-  if (!v) return;
-  localStorage.setItem(GEMINI_KEY_STORAGE, v);
-  closeGeminiModal();
-  updateGeminiDot();
-  // 저장 후 바로 파일 선택
-  document.getElementById('ocr-file-input').click();
+  dot.style.display = scriptUrl ? 'none' : 'block';
 }
 
 async function handleOcrImage(event) {
   var file = event.target.files[0];
   if (!file) return;
 
-  // Gemini 키 없으면 모달
-  if (!getGeminiKey()) {
-    openGeminiModal();
+  if (!scriptUrl) {
+    openModal();
+    showStatus('먼저 구글 시트를 연결해 주세요.', 'error');
     event.target.value = '';
     return;
   }
@@ -6280,94 +6135,27 @@ async function handleOcrImage(event) {
   statusEl.style.background = '#e3f2fd';
   statusEl.style.borderColor = 'rgba(21,101,192,0.2)';
   statusEl.style.color = '#1565c0';
-  statusEl.textContent = '⏳ 1단계: OCR 텍스트 인식 중...';
+  statusEl.textContent = '⏳ OCR + Gemini AI 분석 중...';
 
   try {
-    // ── STEP 1: OCR.space → 텍스트 추출 ──
-    var formData = new FormData();
-    formData.append('file', file);
-    formData.append('apikey', OCR_API_KEY);
-    formData.append('language', 'kor');
-    formData.append('isOverlayRequired', 'false');
-    formData.append('detectOrientation', 'true');
-    formData.append('scale', 'true');
-    formData.append('isTable', 'false');
-    formData.append('OCREngine', '2');
-
-    var ocrRes = await fetch('https://api.ocr.space/parse/image', {
-      method: 'POST',
-      body: formData
+    // 이미지 → base64
+    var base64 = await new Promise(function(res, rej) {
+      var r = new FileReader();
+      r.onload = function(ev) { res(ev.target.result.split(',')[1]); };
+      r.onerror = function() { rej(new Error('파일 읽기 실패')); };
+      r.readAsDataURL(file);
     });
-    var ocrData = await ocrRes.json();
 
-    if (!ocrData || ocrData.IsErroredOnProcessing) {
-      throw new Error(ocrData && ocrData.ErrorMessage ? ocrData.ErrorMessage[0] : 'OCR 처리 실패');
-    }
+    // GAS 프록시로 전송 (API 키는 서버에서 관리)
+    var resp = await fetch(scriptUrl, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'ocr_gemini', imageBase64: base64 })
+    });
+    var json = await resp.json();
+    if (json.status !== 'ok') throw new Error(json.message || 'OCR 처리 실패');
 
-    var text = (ocrData.ParsedResults && ocrData.ParsedResults[0] && ocrData.ParsedResults[0].ParsedText) || '';
-    if (!text.trim()) {
-      throw new Error('텍스트 인식 불가 — 이미지를 더 밝고 선명하게 촬영해주세요');
-    }
-
-    // ── STEP 2: Gemini → 필드 파싱 ──
-    statusEl.textContent = '⏳ 2단계: Gemini AI 필드 분석 중...';
-
-    var geminiKey = getGeminiKey();
-    var prompt = '다음은 교회 공개보고서에서 OCR로 추출한 텍스트입니다. 아래 JSON 형식으로만 응답하세요. 다른 텍스트나 마크다운 없이 JSON만 출력하세요.\n\n' +
-      '{\n' +
-      '"date":"전도일 날짜를 YYYY-MM-DD 형식으로(예:2026-05-16)",\n' +
-      '"location":"거주지역(시/구/동)",\n' +
-      '"name":"성씨 한글자만(예:김)",\n' +
-      '"age":"나이 숫자만(예:88)",\n' +
-      '"marriage":"기혼 또는 미혼 중 하나",\n' +
-      '"gender":"남자 또는 여자 중 하나",\n' +
-      '"meet_place":"만난 장소",\n' +
-      '"target_type":"질문지 또는 지인/지인가족 또는 가족 중 하나",\n' +
-      '"religion":"기독교 또는 천주교 또는 불교 또는 무교 중 하나",\n' +
-      '"job":"직업",\n' +
-      '"heaven":"있었고 또는 없었고 중 하나",\n' +
-      '"reason":"믿음 또는 행위 또는 불확실 또는 대답안함 중 하나",\n' +
-      '"diagnosis":"비신자 또는 착각비신자 또는 확신부족 또는 이미신자 중 하나",\n' +
-      '"result":"결신 또는 보류 또는 거절 또는 확신 또는 이미신자 중 하나",\n' +
-      '"q10":"현장 느낀점 전체 텍스트",\n' +
-      '"q12":"기도제목"\n' +
-      '}\n\n' +
-      '텍스트:\n' + text;
-
-    var geminiRes = await fetch(
-      'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash-lite:generateContent?key=' + geminiKey, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: prompt
-            }]
-          }]
-        })
-      }
-    );
-
-    if (geminiRes.status === 400 || geminiRes.status === 403) {
-      localStorage.removeItem(GEMINI_KEY_STORAGE);
-      updateGeminiDot();
-      throw new Error('Gemini API 키가 유효하지 않습니다. 다시 등록해주세요.');
-    }
-    if (!geminiRes.ok) throw new Error('Gemini API 오류: ' + geminiRes.status);
-
-    var geminiData = await geminiRes.json();
-    var raw = (geminiData.candidates && geminiData.candidates[0] &&
-      geminiData.candidates[0].content && geminiData.candidates[0].content.parts &&
-      geminiData.candidates[0].content.parts[0] && geminiData.candidates[0].content.parts[0].text) || '{}';
-    var clean = raw.replace(/```json|```/g, '').trim();
-    var parsed;
-    try {
-      parsed = JSON.parse(clean);
-    } catch (e) {
-      throw new Error('결과 파싱 실패 — 다시 시도해주세요');
-    }
+    var parsed = json.parsed || {};
+    var text = json.ocrText || '';
 
     // ── 디버그 패널 표시 ──
     showOcrDebug(text, parsed);
@@ -6494,11 +6282,6 @@ async function handleOcrImage(event) {
     statusEl.style.borderColor = 'rgba(192,0,0,0.2)';
     statusEl.style.color = '#c00';
     statusEl.textContent = '❌ ' + e.message;
-    if (e.message.indexOf('Gemini') > -1 || e.message.indexOf('키') > -1) {
-      setTimeout(function() {
-        openGeminiModal();
-      }, 1200);
-    }
     console.error('OCR 오류:', e);
   }
 
