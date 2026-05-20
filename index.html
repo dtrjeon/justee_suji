@@ -526,12 +526,8 @@ select {
   width: 15px;
   height: 15px;
   accent-color: #2050c8;
-  /* iOS 15.4 미만 폴백: 기본 스타일 그대로 */
   cursor: pointer;
   flex-shrink: 0;
-  /* iOS 체크박스 기본 스타일 유지 (appearance:auto) */
-  -webkit-appearance: auto;
-  appearance: auto;
 }
 
 .ms-tags {
@@ -1919,17 +1915,16 @@ pre.code-block {
         <div style="width:28px;height:28px;background:linear-gradient(135deg,#1565c0,#0d47a1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;position:relative;">📷
           <span id="ocr-gemini-dot" style="position:absolute;bottom:1px;right:1px;width:8px;height:8px;border-radius:50%;background:#ef4444;border:1.5px solid #fff;display:none;"></span>
         </div>
-        <input type="file" id="ocr-file-input" accept="image/*" capture="environment"
+        <input type="file" id="ocr-file-input" accept="image/*"
           style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:99;font-size:16px;margin:0;padding:0;">
       </div>
-      <!-- Claude AI 클라우드 버튼 (iOS 호환: label로 파일input 직접 연결) -->
+      <!-- Claude AI 클라우드 버튼 -->
       <div style="position:absolute;right:0;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);width:28px;height:28px;flex-shrink:0;">
-        <!-- API 키 없을 때만 onclick 모달 사용, 있으면 label이 input 직접 트리거 -->
-        <label id="claude-btn" for="claude-file-input" onclick="return handleClaudeBtnClick(event)" style="width:28px;height:28px;background:linear-gradient(135deg,#7c3aed,#4c1d95);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;position:relative;" title="Claude AI 자동인식">☁️
+        <div id="claude-btn" onclick="handleClaudeBtn()" style="width:28px;height:28px;background:linear-gradient(135deg,#7c3aed,#4c1d95);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;position:relative;" title="Claude AI 자동인식">☁️
           <span id="claude-api-dot" style="position:absolute;bottom:1px;right:1px;width:8px;height:8px;border-radius:50%;background:#ef4444;border:1.5px solid #fff;display:none;"></span>
-        </label>
-        <input type="file" id="claude-file-input" accept="image/*" capture="environment"
-          style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:-1;font-size:16px;margin:0;padding:0;">
+        </div>
+        <input type="file" id="claude-file-input" accept="image/*"
+          style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:99;font-size:16px;margin:0;padding:0;display:none;">
       </div>
     </div>
     <div id="ocr-status" style="display:none;margin-bottom:8px;background:#e3f2fd;border:1px solid rgba(21,101,192,0.2);border-radius:6px;padding:8px 12px;font-size:12px;color:#1565c0;font-weight:600;text-align:center;"></div>
@@ -5776,20 +5771,8 @@ async function printMultiSuju() {
 
     // 파일명: 날짜_수주반보고서
     var fname = '수주반_공개보고서_' + new Date().toISOString().slice(0, 10) + '.pdf';
-    // iOS Safari는 pdf.save() Blob 다운로드 미지원 → 새 탭으로 열기
-    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    if (isIOS) {
-      var dataUri = pdf.output('datauristring');
-      var win = window.open(dataUri, '_blank');
-      if (!win) {
-        showStatus('⚠️ 팝업이 차단됐습니다. Safari 설정 > 팝업 차단을 해제해주세요.', 'warn');
-      } else {
-        showStatus('✅ PDF 열기 완료! 공유 버튼으로 저장하세요. (' + selected.length + '매)', 'success');
-      }
-    } else {
-      pdf.save(fname);
-      showStatus('✅ PDF 저장 완료! (' + selected.length + '매)', 'success');
-    }
+    pdf.save(fname);
+    showStatus('✅ PDF 저장 완료! (' + selected.length + '매)', 'success');
   } catch (e) {
     showStatus('PDF 생성 오류: ' + e.message, 'error');
     console.error(e);
@@ -5819,20 +5802,6 @@ function _printViaWindow(selected) {
     '<style>@page{size:A5 portrait;margin:0;}body{margin:0;padding:0;}' +
     '@media print{div{page-break-after:always;}div:last-child{page-break-after:avoid;}}</style>' +
     '</head><body onload="window.print()">' + pages + '</body></html>';
-
-  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  if (isIOS) {
-    // iOS: Blob URL window.open 차단 → data URI로 대체
-    var dataUri = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
-    var win = window.open(dataUri, '_blank');
-    if (!win) {
-      showStatus('⚠️ 팝업이 차단됐습니다. Safari 설정 > 팝업 차단을 해제 후 다시 시도하세요.', 'warn');
-    } else {
-      showStatus('📄 인쇄창을 열었습니다.', 'success');
-    }
-    return;
-  }
-
   var blob = new Blob([html], {
     type: 'text/html;charset=utf-8'
   });
@@ -5849,18 +5818,18 @@ function _printViaWindow(selected) {
 }
 
 // ── 손글씨 OCR (Claude API) ──────────────────────────────
-// ocrBtnClick은 OCR 원형버튼 위에 input[type=file]이 직접 오버레이되어 있어
-// 사용자가 버튼을 탭하면 브라우저가 input을 직접 트리거함.
-// 이 함수는 혹시 다른 곳에서 호출 시 폴백으로만 사용.
 function ocrBtnClick() {
-  // OCR 버튼은 이미 input이 오버레이 방식이므로 별도 처리 불필요
-  // 데스크톱 폴백만 유지
   var inp = document.getElementById('ocr-file-input');
   if (!inp) return;
   try {
     inp.click();
   } catch (e) {
-    // 실패 시 무시 (오버레이 input이 이미 처리함)
+    var lbl = document.createElement('label');
+    lbl.htmlFor = 'ocr-file-input';
+    lbl.style.display = 'none';
+    document.body.appendChild(lbl);
+    lbl.click();
+    document.body.removeChild(lbl);
   }
 }
 
@@ -6013,27 +5982,17 @@ function updateClaudeDot() {
   }
 }
 
-// iOS 호환: label[for=claude-file-input]의 onclick에서 호출
-// API 키가 없으면 모달을 열고 label→input 연결을 막는다(return false)
-// API 키가 있으면 그냥 통과(label이 input을 직접 트리거)
-function handleClaudeBtnClick(event) {
-  var key = getClaudeKey();
-  if (!key) {
-    event.preventDefault();
-    document.getElementById('claude-key-modal').style.display = 'flex';
-    return false;
-  }
-  return true;
-}
-
 function handleClaudeBtn() {
   var key = getClaudeKey();
   if (!key) {
+    // API 키 미등록 → 모달 표시
     document.getElementById('claude-key-modal').style.display = 'flex';
     return;
   }
+  // API 키 있으면 파일 선택
   var inp = document.getElementById('claude-file-input');
-  if (inp) inp.click();
+  inp.style.display = 'block';
+  inp.click();
 }
 
 function validateClaudeKey() {
@@ -6061,8 +6020,10 @@ function saveClaudeKey() {
   localStorage.setItem(CLAUDE_KEY_STORAGE, v);
   closeClaudeKeyModal();
   updateClaudeDot();
-  // iOS 호환: 저장 후 사용자에게 버튼을 다시 탭하도록 안내
-  showStatus('✅ API 키 저장 완료! 이제 ☁️ 버튼을 다시 탭하여 이미지를 선택하세요.', 'success');
+  // 저장 직후 파일 선택 실행
+  var inp = document.getElementById('claude-file-input');
+  inp.style.display = 'block';
+  inp.click();
 }
 
 function initClaudeInput() {
@@ -6260,8 +6221,16 @@ function initOcrInput() {
   inp.addEventListener('change', function(e) {
     if (e.target.files && e.target.files[0]) handleOcrImage(e);
   });
-  // iOS 호환: input이 오버레이 방식이므로 별도 touchend 트리거 불필요
-  // (touchend + inp.click()은 iOS Safari에서 사용자 제스처 외 호출로 차단됨)
+  // 버튼 영역 터치 시 직접 input 트리거
+  var wrap = inp.parentElement;
+  if (wrap) {
+    wrap.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      inp.click();
+    }, {
+      passive: false
+    });
+  }
 }
 // OCR.space API 키 (무료)
 var OCR_API_KEY = 'K83219514388957';

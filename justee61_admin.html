@@ -81,6 +81,10 @@ body {
   font-family: 'Noto Sans KR', sans-serif;
 }
 
+.tb-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
 .conn-badge {
   display: flex;
   align-items: center;
@@ -111,13 +115,6 @@ body {
   display: flex;
   padding: 0 16px;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch; /* iOS 관성 스크롤 */
-  scrollbar-width: none; /* Firefox 스크롤바 숨김 */
-  -ms-overflow-style: none; /* IE 스크롤바 숨김 */
-}
-
-.tabs::-webkit-scrollbar {
-  display: none; /* iOS/Chrome 스크롤바 숨김 */
 }
 
 .tab {
@@ -133,18 +130,8 @@ body {
   transition: .2s;
 }
 
-/* hover는 실제 마우스(포인터) 기기에서만 적용 — iOS 터치 잔류 방지 */
-@media (hover: hover) and (pointer: fine) {
-  .tab:hover {
-    color: var(--primary);
-  }
-  .tb-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
-  }
-  .preset-member-btn:hover {
-    background: #e8eeff;
-    border-color: #2050c8;
-  }
+.tab:hover {
+  color: var(--primary);
 }
 
 .tab.active {
@@ -161,7 +148,6 @@ body {
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  -webkit-overflow-scrolling: touch;
 }
 
 .week-bar label {
@@ -180,8 +166,6 @@ body {
   background: #fff;
   cursor: pointer;
   outline: none;
-  -webkit-appearance: none;
-  appearance: none;
 }
 
 .week-select:focus {
