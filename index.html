@@ -2822,7 +2822,7 @@ const DIAG_MAP = {
   }
 };
 let currentMode = 'server';
-let scriptUrl = localStorage.getItem('apps_script_url') || 'https://script.google.com/macros/s/AKfycbz3VAjIO-7HzGEB_fEduC_m6WnIUOhwCjphk7omGlM7YTHreMMmLGX5luvXCTzNhHrV/exec';
+let scriptUrl = localStorage.getItem('apps_script_url') || 'https://script.google.com/macros/s/AKfycby47tOwQxGTLtMAC17E3TOKrC9oAohtApHnwErTbAn0pBJC9h0_-Qafc_VSbW9P0D0N/exec';
 var _lastSavedDiagResult = '';
 
 var _autoSaveTimer = null;
@@ -6424,6 +6424,85 @@ window.onload = function() {
   initOcrInput();
   initClaudeInput();
   updateGeminiDot();
+
+  // ── admin.html에서 불일치 수정 요청 처리 ──────────────────────────────────
+  (function() {
+    var req = localStorage.getItem('admin_load_request');
+    if (!req) return;
+    try {
+      var obj = JSON.parse(req);
+      // 5분 이내 요청만 처리
+      if (Date.now() - (obj.ts || 0) > 5 * 60 * 1000) return;
+      localStorage.removeItem('admin_load_request');
+      if (!obj.record) return;
+
+      // 한국어 키 → 폼 데이터 변환
+      var r = obj.record;
+      var data = {
+        week: r['주차'] || '',
+        date: r['전도일'] || '',
+        doc_number: r['문서번호'] || '',
+        evang_type: r['전도유형'] || '',
+        evang_count: r['횟수'] || '',
+        jo: r['조'] || '',
+        leader: r['훈련자(조장)'] || '',
+        trainer: r['훈련자'] || '',
+        trainee1: r['훈련생'] || '',
+        contact: r['접촉횟수'] || '',
+        gospel: r['복음제시'] || '',
+        target: r['대상자'] || '',
+        decision: r['결신'] || '',
+        reject: r['보류/거절'] || '',
+        confirm: r['확신'] || '',
+        believer: r['이미신자'] || '',
+        location: r['거주지역'] || '',
+        target_type: r['대상자구분'] || '',
+        name: r['성씨'] || '',
+        age: r['나이'] || '',
+        marriage: r['결혼여부'] || '',
+        gender: r['성별'] || '',
+        meet_place: r['만난장소'] || '',
+        gospel_place: r['복음제시장소'] || '',
+        religion: r['종교배경'] || '',
+        job: r['직업'] || '',
+        heaven: r['천국확신'] || '',
+        reason: r['이유대답'] || '',
+        yeopjeop: r['영접여부'] || '',
+        diag_result: r['진단결과'] || '',
+        leader_part: r['훈련자(조장)역할'] || '',
+        leader_action: r['훈련자(조장)행동'] || '',
+        trainer_part: r['훈련자역할'] || '',
+        trainer_action: r['훈련자행동'] || '',
+        trainee_part: r['훈련생역할'] || '',
+        trainee_action: r['훈련생행동'] || '',
+        result: r['결과'] || '',
+        immed_nurture: r['즉석양육'] || '',
+        followup: r['후속양육'] || '',
+        followup_reason: r['하지못한사유'] || '',
+        q10: r['느낀점(10번)'] || '',
+        q11: r['문제점(11번)'] || '',
+        q12: r['기도제목(12번)'] || '',
+        q13: r['기타(13번)'] || ''
+      };
+
+      window._isRevision = true;
+      window._origDocNumber = data.doc_number;
+      applyFormData(data);
+      switchTab('form');
+
+      var sbtn = document.getElementById('submit-btn');
+      if (sbtn) {
+        sbtn.style.background = 'linear-gradient(135deg,#e65100,#bf360c)';
+        sbtn.style.textAlign = 'center';
+        sbtn.innerHTML = '📝 수정 제출<br><span style="font-size:11px;font-weight:400;">(' + data.doc_number + ')</span>';
+      }
+      setTimeout(function() {
+        showStatus('⚠️ [' + data.doc_number + '] 불일치 수정 — 전도유형을 확인 후 제출하세요.', 'error');
+      }, 500);
+    } catch(e) {
+      console.error('admin_load_request 처리 오류:', e);
+    }
+  })();
 };
 
 function showStatus(msg, type) {
