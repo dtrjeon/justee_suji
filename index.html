@@ -2822,7 +2822,7 @@ const DIAG_MAP = {
   }
 };
 let currentMode = 'server';
-let scriptUrl = localStorage.getItem('apps_script_url') || 'https://script.google.com/macros/s/AKfycbxNax58WW9WeIaoQcbXZgj761zkc4YY0HtVnJetQQFr1U0wsgKc2UGhHIydLr0vNSsX/exec';
+let scriptUrl = localStorage.getItem('apps_script_url') || 'https://script.google.com/macros/s/AKfycbxuPr3r-SgY1_FbyRoyphMTMzLefPL2rGhW8ApTbnHH0B2XgX-4yhFGxcA3ZO3ctzNd/exec';
 var _lastSavedDiagResult = '';
 
 var _autoSaveTimer = null;
@@ -3587,8 +3587,11 @@ function onEvangTypeChange() {
     wrap.style.display = 'none';
     document.getElementById('personal_member').value = '';
   }
-  autoDocNumber();
-  suggestEvangCount();
+  // 수정 모드에서는 문서번호·횟수 자동변경 하지 않음
+  if (!window._isRevision) {
+    autoDocNumber();
+    suggestEvangCount();
+  }
   syncPreview();
 }
 
