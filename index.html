@@ -4185,10 +4185,15 @@ function onTestimony6Change() {
 }
 
 function onYeopjeopChange() {
+  // 모바일에서 포커스 이동으로 인한 스크롤 방지
+  var scrollY = window.scrollY;
   var hv = radio('heaven'),
     rs = radio('reason'),
     yj = radio('yeopjeop');
-  if (!hv || !rs || !yj) return;
+  if (!hv || !rs || !yj) {
+    requestAnimationFrame(function(){ window.scrollTo(0, scrollY); });
+    return;
+  }
   var info = getDiagInfo(hv, rs);
   if (!info) return;
   var result = calcResult(hv, rs, yj);
@@ -4207,14 +4212,23 @@ function onYeopjeopChange() {
   document.getElementById('diag-saved-result').value = saved;
   var resultEl = document.getElementById('q8_result');
   if (resultEl) resultEl.value = result;
-  // 통계 자동 반영
+  // 통계 자동 반영 — 이전 값 차감 후 새 값 증가
+  var map = {
+    '결신': 't_decision',
+    '이미신자': 't_believer',
+    '확신': 't_confirm',
+    '보류 / 거부': 't_reject'
+  };
   if (saved !== _lastSavedDiagResult) {
-    var map = {
-      '결신': 't_decision',
-      '이미신자': 't_believer',
-      '확신': 't_confirm',
-      '보류 / 거부': 't_reject'
-    };
+    // 이전 결과 차감
+    if (_lastSavedDiagResult) {
+      var prevResult = _lastSavedDiagResult.split(' | 결과: ')[1];
+      if (prevResult && map[prevResult]) {
+        var prevEl = document.getElementById(map[prevResult]);
+        if (prevEl) prevEl.value = Math.max(0, (parseInt(prevEl.value) || 0) - 1);
+      }
+    }
+    // 새 결과 증가
     if (map[result]) {
       var cntEl = document.getElementById(map[result]);
       if (cntEl) cntEl.value = (parseInt(cntEl.value) || 0) + 1;
@@ -4231,6 +4245,7 @@ function onYeopjeopChange() {
     updateFollowup();
   }
   syncPreview();
+  requestAnimationFrame(function(){ window.scrollTo(0, scrollY); });
 }
 
 function saveDiagResult() {
