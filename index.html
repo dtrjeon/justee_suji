@@ -2822,7 +2822,7 @@ const DIAG_MAP = {
   }
 };
 let currentMode = 'server';
-let scriptUrl = localStorage.getItem('apps_script_url') || 'https://script.google.com/macros/s/AKfycbxfCcXlMqAo58k03-yqKCc0iw8QylgVzVRjPHFI721xvMF9xHcZrwaDii8Nisf5EU0/exec';
+let scriptUrl = localStorage.getItem('apps_script_url') || 'https://script.google.com/macros/s/AKfycbxNax58WW9WeIaoQcbXZgj761zkc4YY0HtVnJetQQFr1U0wsgKc2UGhHIydLr0vNSsX/exec';
 var _lastSavedDiagResult = '';
 
 var _autoSaveTimer = null;
@@ -6431,74 +6431,69 @@ window.onload = function() {
     if (!req) return;
     try {
       var obj = JSON.parse(req);
-      // 5분 이내 요청만 처리
-      if (Date.now() - (obj.ts || 0) > 5 * 60 * 1000) return;
-      localStorage.removeItem('admin_load_request');
-      if (!obj.record) return;
-
-      // 한국어 키 → 폼 데이터 변환
-      var r = obj.record;
-      var data = {
-        week: r['주차'] || '',
-        date: r['전도일'] || '',
-        doc_number: r['문서번호'] || '',
-        evang_type: r['전도유형'] || '',
-        evang_count: r['횟수'] || '',
-        jo: r['조'] || '',
-        leader: r['훈련자(조장)'] || '',
-        trainer: r['훈련자'] || '',
-        trainee1: r['훈련생'] || '',
-        contact: r['접촉횟수'] || '',
-        gospel: r['복음제시'] || '',
-        target: r['대상자'] || '',
-        decision: r['결신'] || '',
-        reject: r['보류/거절'] || '',
-        confirm: r['확신'] || '',
-        believer: r['이미신자'] || '',
-        location: r['거주지역'] || '',
-        target_type: r['대상자구분'] || '',
-        name: r['성씨'] || '',
-        age: r['나이'] || '',
-        marriage: r['결혼여부'] || '',
-        gender: r['성별'] || '',
-        meet_place: r['만난장소'] || '',
-        gospel_place: r['복음제시장소'] || '',
-        religion: r['종교배경'] || '',
-        job: r['직업'] || '',
-        heaven: r['천국확신'] || '',
-        reason: r['이유대답'] || '',
-        yeopjeop: r['영접여부'] || '',
-        diag_result: r['진단결과'] || '',
-        leader_part: r['훈련자(조장)역할'] || '',
-        leader_action: r['훈련자(조장)행동'] || '',
-        trainer_part: r['훈련자역할'] || '',
-        trainer_action: r['훈련자행동'] || '',
-        trainee_part: r['훈련생역할'] || '',
-        trainee_action: r['훈련생행동'] || '',
-        result: r['결과'] || '',
-        immed_nurture: r['즉석양육'] || '',
-        followup: r['후속양육'] || '',
-        followup_reason: r['하지못한사유'] || '',
-        q10: r['느낀점(10번)'] || '',
-        q11: r['문제점(11번)'] || '',
-        q12: r['기도제목(12번)'] || '',
-        q13: r['기타(13번)'] || ''
-      };
-
-      window._isRevision = true;
-      window._origDocNumber = data.doc_number;
-      applyFormData(data);
-      switchTab('form');
-
-      var sbtn = document.getElementById('submit-btn');
-      if (sbtn) {
-        sbtn.style.background = 'linear-gradient(135deg,#e65100,#bf360c)';
-        sbtn.style.textAlign = 'center';
-        sbtn.innerHTML = '📝 수정 제출<br><span style="font-size:11px;font-weight:400;">(' + data.doc_number + ')</span>';
+      if (Date.now() - (obj.ts || 0) > 5 * 60 * 1000) {
+        localStorage.removeItem('admin_load_request');
+        return;
       }
-      setTimeout(function() {
-        showStatus('⚠️ [' + data.doc_number + '] 불일치 수정 — 전도유형을 확인 후 제출하세요.', 'error');
-      }, 500);
+      localStorage.removeItem('admin_load_request');
+
+      function applyAndShow(r) {
+        var data = {
+          week: r['주차'] || '', date: r['전도일'] || '',
+          doc_number: r['문서번호'] || '', evang_type: r['전도유형'] || '',
+          evang_count: r['횟수'] || '', jo: r['조'] || '',
+          leader: r['훈련자(조장)'] || '', trainer: r['훈련자'] || '',
+          trainee1: r['훈련생'] || '', contact: r['접촉횟수'] || '',
+          gospel: r['복음제시'] || '', target: r['대상자'] || '',
+          decision: r['결신'] || '', reject: r['보류/거절'] || '',
+          confirm: r['확신'] || '', believer: r['이미신자'] || '',
+          location: r['거주지역'] || '', target_type: r['대상자구분'] || '',
+          name: r['성씨'] || '', age: r['나이'] || '',
+          marriage: r['결혼여부'] || '', gender: r['성별'] || '',
+          meet_place: r['만난장소'] || '', gospel_place: r['복음제시장소'] || '',
+          religion: r['종교배경'] || '', job: r['직업'] || '',
+          heaven: r['천국확신'] || '', reason: r['이유대답'] || '',
+          yeopjeop: r['영접여부'] || '', diag_result: r['진단결과'] || '',
+          leader_part: r['훈련자(조장)역할'] || '', leader_action: r['훈련자(조장)행동'] || '',
+          trainer_part: r['훈련자역할'] || '', trainer_action: r['훈련자행동'] || '',
+          trainee_part: r['훈련생역할'] || '', trainee_action: r['훈련생행동'] || '',
+          result: r['결과'] || '', immed_nurture: r['즉석양육'] || '',
+          followup: r['후속양육'] || '', followup_reason: r['하지못한사유'] || '',
+          q10: r['느낀점(10번)'] || '',
+          q11: r['문제점(11번)'] || '',
+          q12: r['기도제목(12번)'] || '',
+          q13: r['기타(13번)'] || ''
+        };
+        window._isRevision = true;
+        window._origDocNumber = data.doc_number;
+        applyFormData(data);
+        var sbtn = document.getElementById('submit-btn');
+        if (sbtn) {
+          sbtn.style.background = 'linear-gradient(135deg,#e65100,#bf360c)';
+          sbtn.style.textAlign = 'center';
+          sbtn.innerHTML = '📝 수정 제출<br><span style="font-size:11px;font-weight:400;">(' + data.doc_number + ')</span>';
+        }
+        setTimeout(function() {
+          showStatus('⚠️ [' + data.doc_number + '] 불일치 수정 — 전도유형을 확인 후 제출하세요.', 'error');
+        }, 500);
+      }
+
+      // record가 있으면 바로 적용, 없으면 GAS에서 직접 조회
+      if (obj.record) {
+        applyAndShow(obj.record);
+      } else if (scriptUrl && obj.docNumber) {
+        showStatus('⏳ 레코드 조회 중...', '');
+        fetch(scriptUrl + '?action=get_by_doc&docNumber=' + encodeURIComponent(obj.docNumber), { redirect: 'follow' })
+          .then(function(res) { return res.json(); })
+          .then(function(json) {
+            if (json.status === 'ok' && json.record) {
+              applyAndShow(json.record);
+            } else {
+              showStatus('❌ ' + (json.message || '레코드를 찾을 수 없습니다.'), 'error');
+            }
+          })
+          .catch(function(e) { showStatus('❌ 조회 실패: ' + e.message, 'error'); });
+      }
     } catch(e) {
       console.error('admin_load_request 처리 오류:', e);
     }

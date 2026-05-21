@@ -1875,7 +1875,7 @@ const MEMBERS = [{
 
 // ── 설정 ────────────────────────────────────────────────────────────────────
 let CFG = {
-  url: localStorage.getItem('mon_url') || 'https://script.google.com/macros/s/AKfycbxfCcXlMqAo58k03-yqKCc0iw8QylgVzVRjPHFI721xvMF9xHcZrwaDii8Nisf5EU0/exec',
+  url: localStorage.getItem('mon_url') || 'https://script.google.com/macros/s/AKfycbxNax58WW9WeIaoQcbXZgj761zkc4YY0HtVnJetQQFr1U0wsgKc2UGhHIydLr0vNSsX/exec',
   title: localStorage.getItem('mon_title') || '61기 수주반',
   trainStart: localStorage.getItem('mon_trainStart') || '',
   trainEnd: localStorage.getItem('mon_trainEnd') || '',
@@ -2197,10 +2197,10 @@ function parseRecords(raw) {
       immedNurture: g('즉석양육'),
       followup: g('후속양육'),
       followupReason: g('하지못한사유'),
-      q10: g('느낀점(10)') || g('느낀점(10번)'),
-      q11: g('문제점(11)') || g('문제점(11번)'),
-      q12: g('기도제목(12)') || g('기도제목(12번)'),
-      q13: g('기타(13)') || g('기타(13번)')
+      q10: g('느낀점(10번)'),
+      q11: g('문제점(11번)'),
+      q12: g('기도제목(12번)'),
+      q13: g('기타(13번)')
     };
   });
 }
@@ -2231,31 +2231,40 @@ function updatePeriodTxt(w) {
 }
 
 function openInIndex(docNumber) {
-  // GAS에서 해당 문서번호 레코드 조회 후 localStorage에 저장
   if (!CFG.url) {
-    showToast('구글 시트 URL이 설정되지 않았습니다.', 'warn');
+    showToast('구글 시트 URL이 설정되지 않았습니다.');
     return;
   }
   showToast('⏳ 레코드 조회 중...');
-  fetch(CFG.url + '?action=get_by_doc&docNumber=' + encodeURIComponent(docNumber), {
-    method: 'GET', redirect: 'follow'
-  })
-  .then(function(res){ return res.json(); })
-  .then(function(json){
-    if (json.status !== 'ok' || !json.record) throw new Error('레코드를 찾을 수 없습니다.');
-    // localStorage에 저장 (index.html과 공유)
-    localStorage.setItem('admin_load_request', JSON.stringify({
-      docNumber: docNumber,
-      record: json.record,
-      ts: Date.now()
-    }));
-    // index.html 새 탭으로 열기
-    window.open('/index.html', '_blank');
-    showToast('✅ index.html을 열고 있습니다...');
-  })
-  .catch(function(e){
-    showToast('❌ ' + e.message);
-  });
+
+  var url = CFG.url + '?action=get_by_doc&docNumber=' + encodeURIComponent(docNumber);
+
+  fetch(url, { method: 'GET', redirect: 'follow' })
+    .then(function(res) { return res.text(); })
+    .then(function(text) {
+      var json;
+      try { json = JSON.parse(text); } catch(e) { throw new Error('응답 파싱 실패: ' + text.slice(0, 100)); }
+      if (json.status !== 'ok') throw new Error(json.message || '오류');
+      if (!json.record) throw new Error('레코드 없음');
+
+      localStorage.setItem('admin_load_request', JSON.stringify({
+        docNumber: docNumber,
+        record: json.record,
+        ts: Date.now()
+      }));
+      window.open('https://dtrjeon.github.io/index.html', '_blank');
+      showToast('✅ index.html을 열고 있습니다...');
+    })
+    .catch(function(e) {
+      showToast('❌ ' + e.message);
+      // 실패해도 localStorage에 문서번호만 저장해서 index.html에서 GAS 조회하도록
+      localStorage.setItem('admin_load_request', JSON.stringify({
+        docNumber: docNumber,
+        record: null,
+        ts: Date.now()
+      }));
+      window.open('https://dtrjeon.github.io/index.html', '_blank');
+    });
 }
 
 function checkMismatch(data) {
